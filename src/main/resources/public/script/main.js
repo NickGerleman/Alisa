@@ -54,6 +54,11 @@ $(function () {
                     }
                     blurbQueues[update.bot].push(update);
                 });
+                if (update.type == "location") {
+                    bots[update.bot].latitude = update.latitude;
+                    bots[update.bot].longitude = update.longitude;
+                    remap();
+                }
                 stream();
             })
             .fail(function () {
@@ -98,6 +103,8 @@ $(function () {
             blurb = likeBlurb(update);
         } else if (update.type == 'match') {
             blurb = matchBlurb(update);
+        } else {
+            return;
         }
         streamDiv.append(blurb);
         setTimeout(function () {
@@ -122,9 +129,9 @@ $(function () {
     }
 
     function matchBlurb(update) {
-        var mainPhoto = update.user.photos.map(function(photo) {
+        var mainPhoto = (update.user.photos.filter(function(photo) {
             return photo.main;
-        })[0];
+        })[0] || update.user.photos[0]).url84;
         return blurb('match', "Matched With " + update.user.name, mainPhoto.url84);
     }
 });
