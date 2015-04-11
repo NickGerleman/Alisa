@@ -158,7 +158,7 @@ nav h1 {
     right: 250px;
     left: 0px;
     overflow: auto;
-    height: 100%;
+    height: calc(100% - 64px);
 }
 
 #chatPopup {
