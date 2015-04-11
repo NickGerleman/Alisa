@@ -1,7 +1,11 @@
 package tinder;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 public abstract class Profile {
 	public String profileName;
@@ -18,10 +22,20 @@ public abstract class Profile {
 	}
 	
 	public List<Update> getUpdates(String timeStamp){
-		return Tinder.update(authCookie,timeStamp);
+		return Tinder.update(authCookie, timeStamp);
+	}
+
+	public List<Update> getUpdates(){
+		List<Update> updates = Tinder.update(authCookie,this.timestamp);
+		TimeZone tz = TimeZone.getTimeZone("UTC");
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
+		df.setTimeZone(tz);
+		timestamp = df.format(new Date());
+		return updates;
 	}
 	
 	public List<OtherUser> autoLike(){
+
 
 		List<OtherUser> recs = Tinder.getUsers(authCookie);
 		
@@ -38,6 +52,7 @@ public abstract class Profile {
 		
 		return sucess;
 	}
+
 
 }
 
