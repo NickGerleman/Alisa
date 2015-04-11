@@ -17,12 +17,8 @@ public abstract class Profile {
 		return Tinder.ping(lat,lon,authCookie);
 	}
 	
-	public boolean getUpdates(){
-		boolean sucessful = false;
-		
-		
-		
-		return sucessful;
+	public List<Update> getUpdates(String timeStamp){
+		return Tinder.update(authCookie,timeStamp);
 	}
 	
 	public List<OtherUser> autoLike(int newLikes){
