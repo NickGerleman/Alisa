@@ -7,12 +7,24 @@ public class Message {
     private String toID;
     private String fromID;
     private String message;
-    public Message(String toID, String fromID, String message) {
+    private long timestamp;
+    private String messageID;
+
+    public Message(String toID, String fromID, String message, long timestamp, String messageID) {
         this.toID = toID;
         this.fromID = fromID;
         this.message = message;
+        this.timestamp = timestamp;
+        this.messageID = messageID;
     }
 
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public String getMessageID() {
+        return messageID;
+    }
 
     public String getToID() {
         return toID;

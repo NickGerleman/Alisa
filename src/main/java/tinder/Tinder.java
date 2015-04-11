@@ -380,14 +380,14 @@ ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
 					matchID = (String) message.get("match_id");
 					String messageText = (String) message.get("message");
 					timestamp = Long.parseLong(message.get("timestamp").toString());
-					massages.add(new Message(toID,fromID,messageText));
+					massages.add(new Message(toID,fromID,messageText,timestamp,messageID));
 
 
 				}
 				if(matchID.equals("")){
 					matchID = id;
 				}
-				updates.add(new Update(id,massages,timestamp,matchID));
+				updates.add(new Update(id,massages,matchID));
 			}
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
@@ -433,15 +433,20 @@ ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
 	public static void main(String[] args){
 		String authToken = getAuthToken("CAAGm0PX4ZCpsBANU9X4Ko87f2M4m3dsjrAV5bgZCWcZBn8NVRx0fgAtMrSUNwbzZAv5oPgdO2nkyjlraJJsapNpJhr1OfTLeR9biWHDaq60QMJ5RpGtWffoi5ZA901aL9ia7h6XjuzyYTZCjLKQZB6rjcd9SVRLhTZC1TVxA7ZAxm1GQY8DqkvZByezy4ibg9m2uvgpd40XJZCmghqLZAF3VDlpa");
 		//System.out.println("AuthToken=" + authToken);
-		ping(42.0301381,-93.6521859 , authToken);
+		ping(42.0301381, -93.6521859, authToken);
+
 		List<Update> arr = update(authToken, "2015-04-11T08:32:21.016Z");
 		List<OtherUser> arr2 = getUsers(authToken);
 		for(int i =0;i<arr.size();i++) {
 			System.out.println(arr.get(i));
 		}
+		/*
 		String daniel = "54ca7af5eed36d21180a3aff5529692e2bcf0989376e66ef";
 		sendMessage(daniel, authToken, "I'm a real boy");
-		System.out.println();
+		System.out.println();*/
+
+
+		System.out.println(getAllUpdates(authToken));
 	}
 
 	public static void sendToken(String tinderToken){
@@ -466,6 +471,31 @@ ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
 		System.out.println(response);
 	}
 
+	public static String getAllUpdates(String authToken){
+		ArrayList<Update> updates = new ArrayList<Update>();
+		CloseableHttpClient httpclient = HttpClientBuilder.create().build();
+		HttpPost post = new HttpPost("https://api.gotinder.com/updates");
+		setHeaders(post, authToken);
+		StringBuilder sb = new StringBuilder();
+		sb.append("{\"last_activity_date\":\"");
+		sb.append("\"}");
+
+		try {
+			post.setEntity(new StringEntity("{\"last_activity_date\":\"\"}"));
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		String response = "";
+		try {
+			response = httpclient.execute(post,responseHandler);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return response;
+	}
 	private static ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
 		@Override
 		public String handleResponse(final HttpResponse response)
