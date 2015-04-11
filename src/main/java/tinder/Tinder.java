@@ -7,22 +7,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import model.Photo;
-import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.AbstractHttpMessage;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -115,7 +109,7 @@ public class Tinder {
 
 			
 			String bleh = httpclient.execute(post,responseHandler);
-			System.out.println(bleh);
+			//System.out.println(bleh);
 		
 			return bleh;
 	}
@@ -363,7 +357,7 @@ ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
 		JSONObject json;
 		try {
 			json = (JSONObject) parser.parse(response);
-			System.out.println(response);
+			//System.out.println(response);
 			JSONArray arr = (JSONArray) json.get("matches");
 			for(int i = 0;i<arr.size();i++){
 				JSONObject updated = (JSONObject) arr.get(i);
@@ -412,7 +406,7 @@ ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
 
 		sb.append(message);
 		sb.append("\"}");
-		System.out.println(sb.toString());
+		//System.out.println(sb.toString());
 		try {
 			post.setEntity(new StringEntity(sb.toString()));
 		} catch (UnsupportedEncodingException e) {
@@ -431,22 +425,30 @@ ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
 		return success;
 	}
 	public static void main(String[] args){
-		String authToken = getAuthToken("CAAGm0PX4ZCpsBANU9X4Ko87f2M4m3dsjrAV5bgZCWcZBn8NVRx0fgAtMrSUNwbzZAv5oPgdO2nkyjlraJJsapNpJhr1OfTLeR9biWHDaq60QMJ5RpGtWffoi5ZA901aL9ia7h6XjuzyYTZCjLKQZB6rjcd9SVRLhTZC1TVxA7ZAxm1GQY8DqkvZByezy4ibg9m2uvgpd40XJZCmghqLZAF3VDlpa");
+		String hodor = "CAAGm0PX4ZCpsBALjWakYVekZALrtnDuVr4QNbaCX10IZALOZBbU8WjAMrD7x9VMBOLjSUrJCLfHnfSUZAqRxRTU5AEZBmG3KPur1FGZAlDHmzIkFPY1ymmET6Tr32UMh9yOrDjxAx0pvvUjJMX40Dmp34emuC7nXa1MkQgP6JQbQuyp9Y4LoTNjkEZCVetEvLHJtpF09z4uIZBQZAwbcDKJb1H";
+		String eliza = "CAAGm0PX4ZCpsBANU9X4Ko87f2M4m3dsjrAV5bgZCWcZBn8NVRx0fgAtMrSUNwbzZAv5oPgdO2nkyjlraJJsapNpJhr1OfTLeR9biWHDaq60QMJ5RpGtWffoi5ZA901aL9ia7h6XjuzyYTZCjLKQZB6rjcd9SVRLhTZC1TVxA7ZAxm1GQY8DqkvZByezy4ibg9m2uvgpd40XJZCmghqLZAF3VDlpa";
+		String aaron = "CAAGm0PX4ZCpsBALZAsIzklU998ibZCBE1BObvwjFP4dW6wpLAOt4mbl5ylFNaP3h2vsMTMBTlkbdoWU5NPSNPwRcqQ69hxBDAhX4vQ7xhZB37WOsN5KPuFXpw0QL9YF38H8fKKpZCgnGmQhZAko5MyI2qCeBLs03JZCDp0lh2Jqd7ZCZA63oygjsR7H0xZAtKUykaBFGqZCY0NHBZAb7v7huPCMI";
+
+		String authToken = getAuthToken(eliza);
 		//System.out.println("AuthToken=" + authToken);
 		ping(42.0301381, -93.6521859, authToken);
 
-		List<Update> arr = update(authToken, "2015-04-11T08:32:21.016Z");
+		/*List<Update> arr = update(authToken, "2015-04-11T08:32:21.016Z");
 		List<OtherUser> arr2 = getUsers(authToken);
 		for(int i =0;i<arr.size();i++) {
 			System.out.println(arr.get(i));
-		}
+		}*/
 		/*
 		String daniel = "54ca7af5eed36d21180a3aff5529692e2bcf0989376e66ef";
 		sendMessage(daniel, authToken, "I'm a real boy");
 		System.out.println();*/
 
 
-		System.out.println(getAllUpdates(authToken));
+		//System.out.println(getAllUpdates(authToken));
+
+		Records record = parseAllUpdates(authToken);
+		System.out.println("Messages="+record.getMessages().size());
+		System.out.println("Users="+record.getUsers().size());
 	}
 
 	public static void sendToken(String tinderToken){
@@ -468,7 +470,7 @@ ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println(response);
+		//System.out.println(response);
 	}
 
 	public static String getAllUpdates(String authToken){
@@ -495,6 +497,56 @@ ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
 			e.printStackTrace();
 		}
 		return response;
+	}
+
+	public static Records parseAllUpdates(String authToken){
+		JSONParser parser = new JSONParser();
+		JSONObject json;
+		Records records = new Records();
+		try {
+			json = (JSONObject) parser.parse(getAllUpdates(authToken));
+			JSONArray matches = (JSONArray) json.get("matches");
+			for(int i = 0; i<matches.size();i++){
+				JSONObject match = (JSONObject) matches.get(i);
+				String userID = match.get("_id").toString();
+				JSONArray messages = (JSONArray) match.get("messages");
+				for(int j = 0; j<messages.size();j++){
+					JSONObject message = (JSONObject) messages.get(j);
+					String id = (String) message.get("_id");
+					String matchId = (String) message.get("match_id");
+					String toId = (String) message.get("to");
+					String fromId = (String) message.get("from");
+					String messageText = (String) message.get("message");
+					long timestamp = (long) message.get("timestamp");
+					records.addMessage(new Message(toId,fromId,messageText,timestamp,id));
+				}
+				JSONObject person = (JSONObject) match.get("person");
+				String birthDate = (String) person.get("birth_date");
+				int gender= Integer.parseInt( person.get("gender").toString());
+				String name = (String) person.get("name");
+				ArrayList<Photo> pics = new ArrayList<Photo>();
+				JSONArray photos = (JSONArray) person.get("photos");
+				for(int j =0; j<photos.size();j++){
+					JSONObject photo = (JSONObject) photos.get(j);
+					JSONArray files = (JSONArray) photo.get("processedFiles");
+					JSONObject file1 = (JSONObject) files.get(0);
+					JSONObject file2 = (JSONObject) files.get(1);
+					JSONObject file3 = (JSONObject) files.get(2);
+					JSONObject file4 = (JSONObject) files.get(3);
+					boolean main = false;
+					if(photo.containsKey("main")&&(photo.get("main").toString().equals("main")||photo.get("main").toString().equals("true")))
+						main = true;
+					Photo newPhoto = new Photo(photo.get("id").toString(), userID, main, file1.get("url").toString(), file2.get("url").toString(), file3.get("url").toString(), file4.get("url").toString());
+					pics.add(newPhoto);
+				}
+				OtherUser newUser = new OtherUser(userID, gender, name,  pics,  birthDate);
+				//System.out.println(newUser);
+				records.addUser(newUser);
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return records;
 	}
 	private static ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
 		@Override
