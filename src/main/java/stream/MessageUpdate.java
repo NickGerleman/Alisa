@@ -1,7 +1,15 @@
 package stream;
 
-/**
- * Created by nick on 4/11/15.
- */
-public class MessageUpdate {
+import model.JsonModel;
+import model.Message;
+
+public class MessageUpdate extends JsonModel {
+    private final String type = "message";
+    private final int bot;
+    private final Message message;
+
+    public MessageUpdate(int bot, Message message) {
+        this.bot = bot;
+        this.message = message;
+    }
 }

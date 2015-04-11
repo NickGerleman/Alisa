@@ -74,6 +74,7 @@ public class Bot extends JsonModel {
         }
         for (User user : matchedUsers) {
             user.retrievePhotos(conn);
+            user.retrieveMessages(conn);
         }
     }
 
