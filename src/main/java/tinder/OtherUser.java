@@ -1,5 +1,7 @@
 package tinder;
 
+import model.Photo;
+
 import java.util.ArrayList;
 
 public class OtherUser {
@@ -7,10 +9,10 @@ public class OtherUser {
 	String gender;
 	int genderNumber;
 	String name;
-	ArrayList<String> photos;
+	ArrayList<Photo> photos;
 	String mainPhoto;
 
-	public OtherUser(String id, String gender, String name, ArrayList<String> photos, String mainPhoto){
+	public OtherUser(String id, String gender, String name, ArrayList<Photo> photos, String mainPhoto){
 		this.id=id;
 		this.gender=gender;
 		if(gender.equals("female"))
@@ -22,7 +24,7 @@ public class OtherUser {
 		this.mainPhoto=mainPhoto;
 	}
 	
-	public OtherUser(String id, int gender, String name, ArrayList<String> photos, String mainPhoto){
+	public OtherUser(String id, int gender, String name, ArrayList<Photo> photos, String mainPhoto){
 		this.id=id;
 		this.genderNumber=gender;
 		if(gender==1)
@@ -63,7 +65,12 @@ public class OtherUser {
 		return name;
 	}
 
-	public ArrayList<String> getPhotos() {
+	public ArrayList<Photo> getPhotos() {
 		return photos;
 	}
+
+	public String getMainPhoto(){
+		return mainPhoto;
+	}
+
 }

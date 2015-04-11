@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+import model.Photo;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -53,11 +54,11 @@ public class Tinder {
 		entity.setHeader("Accept-Encoding","gzip");
 	}
 	public static void setHeaders(AbstractHttpMessage entity, String token){
-		entity.setHeader("platform",platform);
-		entity.setHeader("User-Agent",ua);
-		entity.setHeader("X-Auth-Token",token);
-		entity.setHeader("os-version",osVersion);
-		entity.setHeader("app-version",appVersion);
+		entity.setHeader("platform", platform);
+		entity.setHeader("User-Agent", ua);
+		entity.setHeader("X-Auth-Token", token);
+		entity.setHeader("os-version", osVersion);
+		entity.setHeader("app-version", appVersion);
 		entity.setHeader("Content-Type", contentType);
 		entity.setHeader("Host","api.gotinder.com");
 		entity.setHeader("Connection", "Keep-Alive");
@@ -273,16 +274,24 @@ ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
 				String id = (String) person.get("_id");
 				String name = (String) person.get("name");
 				int gender = Integer.parseInt(person.get("gender").toString());
-				ArrayList<String> photos = new ArrayList<String>();
+				ArrayList<Photo> photos = new ArrayList<Photo>();
 				JSONArray phot = (JSONArray) person.get("photos");
 				String mainPhoto = "";
 				for(int j=0;j<phot.size();j++){
 					JSONObject pic = (JSONObject) phot.get(j);
-					photos.add(pic.get("fileName").toString());
-					if(pic.get("main").toString().equals("true")){
-						mainPhoto = pic.get("fileName").toString();
-					}
+					boolean main = pic.get("main").toString().equals("true");
+					JSONArray processed = (JSONArray) pic.get("processedFiles");
+					JSONObject processedPhoto = (JSONObject) processed.get(0);
+					String url640 = processedPhoto.get("url").toString();
+					processedPhoto = (JSONObject) processed.get(1);
+					String url320 = processedPhoto.get("url").toString();
+					processedPhoto = (JSONObject) processed.get(2);
+					String url172 = processedPhoto.get("url").toString();
+					processedPhoto = (JSONObject) processed.get(3);
+					String url84 = processedPhoto.get("url").toString();
 
+					Photo picture = new Photo(pic.get("id").toString(),id,main,url640,url320,url172,url84);
+					photos.add(picture);
 				}
 				
 				//System.out.println(id);
