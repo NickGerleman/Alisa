@@ -56,11 +56,17 @@ public class TinderManager {
     }
 
     private void addMatch(Bot bot, OtherUser user, Connection conn) throws SQLException {
-        PreparedStatement smt = conn.prepareStatement("INSERT INTO match(bot_id, user_id) VALUES (?, ?)");
+        int age = (int)(Duration.between(Instant.parse(user.getBirthday()), Instant.now()).get(ChronoUnit.SECONDS) / 60 / 60 / 24 / 365);
+        PreparedStatement smt = conn.prepareStatement("INSERT INTO \"user\"(id, gender, age, name) VALUES(?, ?, ?, ?)");
+        smt.setString(1, user.getId());
+        smt.setInt(2, user.getGenderNumber());
+        smt.setInt(3, age);
+        smt.setString(4, user.getName());
+        smt.execute();
+        smt = conn.prepareStatement("INSERT INTO match(bot_id, user_id) VALUES (?, ?)");
         smt.setInt(1, bot.getId());
         smt.setString(2, user.getId());
         smt.execute();
-        int age = (int)(Duration.between(Instant.parse(user.getBirthday()), Instant.now()).get(ChronoUnit.SECONDS) / 60 / 60 / 24 / 365);
         User jsonUser = new User(user.getId(), user.getName(), user.getGenderNumber(), age);
         jsonUser.retrievePhotos(conn);
         bQueue.broadcastUpdate(new MatchUpdate(bot.getId(), jsonUser));
