@@ -10,9 +10,8 @@ public class OtherUser {
 	int genderNumber;
 	String name;
 	ArrayList<Photo> photos;
-	String mainPhoto;
 
-	public OtherUser(String id, String gender, String name, ArrayList<Photo> photos, String mainPhoto){
+	public OtherUser(String id, String gender, String name, ArrayList<Photo> photos){
 		this.id=id;
 		this.gender=gender;
 		if(gender.equals("female"))
@@ -21,10 +20,9 @@ public class OtherUser {
 			this.genderNumber=0;
 		this.name=name;
 		this.photos=photos;
-		this.mainPhoto=mainPhoto;
 	}
 	
-	public OtherUser(String id, int gender, String name, ArrayList<Photo> photos, String mainPhoto){
+	public OtherUser(String id, int gender, String name, ArrayList<Photo> photos){
 		this.id=id;
 		this.genderNumber=gender;
 		if(gender==1)
@@ -33,7 +31,6 @@ public class OtherUser {
 			this.gender="male";
 		this.name = name;
 		this.photos=photos;
-		this.mainPhoto = mainPhoto;
 	}
 	
 	public String toString(){
@@ -68,9 +65,6 @@ public class OtherUser {
 	public ArrayList<Photo> getPhotos() {
 		return photos;
 	}
-
-	public String getMainPhoto(){
-		return mainPhoto;
-	}
+	
 
 }

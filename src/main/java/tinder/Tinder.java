@@ -276,7 +276,6 @@ ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
 				int gender = Integer.parseInt(person.get("gender").toString());
 				ArrayList<Photo> photos = new ArrayList<Photo>();
 				JSONArray phot = (JSONArray) person.get("photos");
-				String mainPhoto = "";
 				for(int j=0;j<phot.size();j++){
 					JSONObject pic = (JSONObject) phot.get(j);
 					boolean main = pic.get("main").toString().equals("true");
@@ -295,7 +294,7 @@ ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
 				}
 				
 				//System.out.println(id);
-				recs.add(new OtherUser(id,gender,name,photos,mainPhoto));
+				recs.add(new OtherUser(id,gender,name,photos));
 			}
 			
 			//System.out.println(token);

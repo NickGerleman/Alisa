@@ -18,7 +18,7 @@ public class ProfileManager {
 	        ChatterBot bot2 = factory.create(ChatterBotType.PANDORABOTS, "b0dafd24ee35a477");
 	        ChatterBotSession bot2session = bot2.createSession();
 
-	        String s = "Hi";
+	        String s = "Il fukin rek ya m8";
 	        while (true) {
 
 	            System.out.println("bot1> " + s);
