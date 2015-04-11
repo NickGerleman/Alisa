@@ -7,17 +7,19 @@ import java.util.List;
 public class Bot extends JsonModel {
     private final String name;
     private final int id;
+    private final String tinderId;
     private final double latitude;
     private final double longitude;
     private List<User> matchedUsers;
     private final transient String authToken;
 
-    public Bot(int id, String name, String authToken, Double latitude, Double longitude) {
+    public Bot(int id, String name, String authToken, Double latitude, Double longitude, String tinderId) {
         this.id = id;
         this.name = name;
         this.authToken = authToken;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.tinderId = tinderId;
     }
 
     public static List<Bot> all(Connection conn) throws SQLException {
@@ -30,7 +32,8 @@ public class Bot extends JsonModel {
                     results.getString("name"),
                     results.getString("auth_token"),
                     results.getDouble("latitude"),
-                    results.getDouble("longitude")
+                    results.getDouble("longitude"),
+                    results.getString("tinder_id")
                     ));
         }
         for (Bot bot : bots) {
@@ -50,7 +53,8 @@ public class Bot extends JsonModel {
                     results.getString("name"),
                     results.getString("auth_token"),
                     results.getDouble("latitude"),
-                    results.getDouble("longitude")
+                    results.getDouble("longitude"),
+                    results.getString("tinder_id")
             ));
         }
         if (bot!= null) {
@@ -74,6 +78,7 @@ public class Bot extends JsonModel {
         }
         for (User user : matchedUsers) {
             user.retrievePhotos(conn);
+            user.retrieveMessages(conn);
         }
     }
 
@@ -87,5 +92,9 @@ public class Bot extends JsonModel {
 
     public int getId() {
         return id;
+    }
+
+    public String getTinderId() {
+        return tinderId;
     }
 }

@@ -8,11 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class User extends JsonModel {
+
     private final String id;
     private final String name;
     private final int gender;
     private final int age;
     private List<Photo> photos;
+    private List<Message> messages;
 
     public User(String id, String name, int gender, int age) {
         this.id = id;
@@ -39,7 +41,59 @@ public class User extends JsonModel {
         }
     }
 
-    public void retrieveMessages(Connection conn) {
+    public void retrieveMessages(Connection conn) throws SQLException {
+        messages = new ArrayList<>();
+        PreparedStatement smt = conn.prepareStatement("SELECT * FROM message WHERE from_id = ? OR to_id = ? ORDER BY timestamp");
+        smt.setString(1, id);
+        smt.setString(2, id);
+        ResultSet rs = smt.executeQuery();
+        while (rs.next()) {
+            messages.add(new Message(
+                    rs.getString("id"),
+                    rs.getString("from_id"),
+                    rs.getString("to_id"),
+                    rs.getString("text"),
+                    rs.getTimestamp("timestamp")
+            ));
+        }
+    }
 
+    public static User get(String id, Connection conn) throws SQLException {
+        PreparedStatement smt = conn.prepareStatement("SELECT * FROM \"user\" WHERE id = ?");
+        smt.setString(1, id);
+        ResultSet rs = smt.executeQuery();
+        if (rs.next()) {
+            return new User(
+                    rs.getString("id"),
+                    rs.getString("name"),
+                    rs.getInt("gender"),
+                    rs.getInt("age")
+            );
+        }
+        return null;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getGender() {
+        return gender;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public List<Photo> getPhotos() {
+        return photos;
+    }
+
+    public List<Message> getMessages() {
+        return messages;
     }
 }
