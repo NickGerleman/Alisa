@@ -19,6 +19,16 @@ $(function () {
         streamDiv= blurbStreams[currentBot] || $('<div id="stream">');
         $('#stream').replaceWith(streamDiv);
         remap();
+
+        $('.matchtab').each(function() {
+
+            if($(this).attr('id') == 'tab_' + bots[currentBot].name) {
+                $(this).css('display', '');
+                console.log('show');
+            }
+            else
+                $(this).css('display', 'none');
+        });
     });
 
     $.get("/all")
@@ -35,12 +45,20 @@ $(function () {
             }
             remap();
 
-            console.log("-------------------");
             for (botId in bots) {
                 var bot = bots[botId];
 
+                $('#content').append('<div class="matchtab" id="tab_' + bot.name + '">');
+
                 for(var i=0; i < bot.matchedUsers.length; i++) {
-                    console.log(bot.matchedUsers[i].name);
+                    $('#tab_'+bot.name).append('<div><h1>' + bot.matchedUsers[i].name + '</h1></div>');
+                }
+
+                $('#content').append('</div>');
+
+                if(currentBot != botId) {
+                    console.log(bot.name);
+                    $('#tab_' + bot.name).css('display', 'none');
                 }
             }
         });
