@@ -75,15 +75,7 @@ public class TinderManager {
                         );
                         addMatch(bot, otherUser, connection);
                         for (Message message : update.getMessage()) {
-                            PreparedStatement smt = connection.prepareStatement("INSERT INTO message(id, text, \"timestamp\", from_id, to_id) VALUES (?, ?, ?, ?, ?)" );
-                            smt.setString(1, message.getMessageID());
-                            smt.setString(2, message.getMessage());
-                            smt.setTimestamp(3, new Timestamp(message.getTimestamp()));
-                            smt.setString(4, message.getFromID());
-                            smt.setString(5, message.getToID());
-                            smt.execute();
-                            model.Message updateMessage = new model.Message("1", message.getFromID(), message.getToID(), message.getMessage(), new Timestamp(message.getTimestamp()));
-                            bQueue.broadcastUpdate(updateMessage);
+                            addMessage(message, connection);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -95,6 +87,42 @@ public class TinderManager {
             }
         }, 6, TimeUnit.SECONDS));
 
+        bots.forEach((bot) -> jobPool.scheduleWithFixedDelay(() -> {
+            Records botRecords = Tinder.parseAllUpdates(Tinder.getAuthToken(bot.getAuthToken()));
+            botRecords.getUsers().forEach((otherUser) -> {
+                try {
+                    addUser(otherUser, connection);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            });
+            botRecords.getMessages().forEach((message) -> {
+                try {
+                    addMessage(message, connection);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            });
+        }, 0, 10, TimeUnit.MINUTES));
+
+
+    }
+
+    private void addMessage(Message message, Connection conn) throws SQLException {
+        PreparedStatement smt = conn.prepareStatement("SELECT * FROM message WHERE id = ?");
+        smt.setString(1, message.getMessageID());
+        if (smt.execute()) {
+            return;
+        }
+        smt = conn.prepareStatement("INSERT INTO message(id, text, \"timestamp\", from_id, to_id) VALUES (?, ?, ?, ?, ?)" );
+        smt.setString(1, message.getMessageID());
+        smt.setString(2, message.getMessage());
+        smt.setTimestamp(3, new Timestamp(message.getTimestamp()));
+        smt.setString(4, message.getFromID());
+        smt.setString(5, message.getToID());
+        smt.execute();
+        model.Message updateMessage = new model.Message("1", message.getFromID(), message.getToID(), message.getMessage(), new Timestamp(message.getTimestamp()));
+        bQueue.broadcastUpdate(updateMessage);
     }
 
     private void addUser(OtherUser user, Connection conn) throws SQLException {

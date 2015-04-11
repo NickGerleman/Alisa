@@ -26,7 +26,7 @@ public class Main {
 
     public static void main(String[] kittensOnFire) throws SQLException, ClassNotFoundException {
 
-        ScheduledExecutorService jobPool = Executors.newScheduledThreadPool(16);
+        ScheduledExecutorService jobPool = Executors.newScheduledThreadPool(32);
         BroadcastQueue bQueue = new BroadcastQueue(jobPool);
         staticFileLocation("/public");
 
