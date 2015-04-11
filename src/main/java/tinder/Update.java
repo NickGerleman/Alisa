@@ -24,6 +24,11 @@ public class Update {
 	public String getMatchId(){
 		return matchID;
 	}
+	public String getToID(){
+		if(message.size()!=0)
+			return message.get(0).getToID();
+		return "";
+	}
 
 	@Override
 	public String toString() {
@@ -31,6 +36,7 @@ public class Update {
 				"id='" + id + '\'' +
 				", matchID='" + matchID + '\'' +
 				", message='" + message.size() + '\'' +
+				", toID='" + getToID() + '\'' +
 				'}';
 	}
 }
