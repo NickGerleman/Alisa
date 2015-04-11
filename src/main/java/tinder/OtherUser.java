@@ -11,6 +11,7 @@ public class OtherUser {
 	String name;
 	ArrayList<Photo> photos;
 	String mainPhoto;
+    boolean matched;
 
 	public OtherUser(String id, String gender, String name, ArrayList<Photo> photos, String mainPhoto){
 		this.id=id;

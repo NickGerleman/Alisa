@@ -24,18 +24,14 @@ public abstract class Profile {
 		return sucessful;
 	}
 	
-	public List<OtherUser> autoLike(int newLikes){
-		boolean sucessful = false;
-		
+	public List<OtherUser> autoLike(){
+
 		List<OtherUser> recs = Tinder.getUsers(authCookie);
 		
 		for(int i = 0; i<recs.size(); i++){
-			Tinder.like(recs.get(i).getId(),authCookie);
+			recs.get(i).matched = Tinder.like(recs.get(i).getId(),authCookie);
 			System.out.println("Liked "+recs.get(i).getName());
 		}
-		
-		if(recs.size()>0)
-			sucessful = true;
 		
 		return recs;
 	}

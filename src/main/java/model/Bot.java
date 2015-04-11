@@ -5,13 +5,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Bot extends JsonModel {
-    private String name;
-    private int id;
+    private final String name;
+    private final int id;
+    private final double latitude;
+    private final double longitude;
     private List<User> matchedUsers;
+    private final transient String authToken;
 
-    public Bot(int id, String name) {
+    public Bot(int id, String name, String authToken, Double latitude, Double longitude) {
         this.id = id;
         this.name = name;
+        this.authToken = authToken;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     public static List<Bot> all(Connection conn) throws SQLException {
@@ -21,13 +27,36 @@ public class Bot extends JsonModel {
         while (results.next()) {
             bots.add(new Bot(
                     results.getInt("id"),
-                    results.getString("name")
+                    results.getString("name"),
+                    results.getString("auth_token"),
+                    results.getDouble("latitude"),
+                    results.getDouble("longitude")
                     ));
         }
         for (Bot bot : bots) {
             bot.retrieveMatches(conn);
         }
         return bots;
+    }
+
+    public static Bot get(Connection conn, int id) throws SQLException {
+        Bot bot = null;
+        PreparedStatement smt = conn.prepareStatement("SELECT * FROM bot WHERE id = ?");
+        smt.setInt(1, id);
+        ResultSet results = smt.executeQuery();
+        if (results.next()) {
+            bot = (new Bot(
+                    results.getInt("id"),
+                    results.getString("name"),
+                    results.getString("auth_token"),
+                    results.getDouble("latitude"),
+                    results.getDouble("longitude")
+            ));
+        }
+        if (bot!= null) {
+            bot.retrieveMatches(conn);
+        }
+        return bot;
     }
 
     public void retrieveMatches(Connection conn) throws SQLException {
@@ -43,5 +72,17 @@ public class Bot extends JsonModel {
                     rs.getInt("age")
             ));
         }
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getAuthToken() {
+        return authToken;
+    }
+
+    public int getId() {
+        return id;
     }
 }

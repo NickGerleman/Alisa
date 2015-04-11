@@ -58,7 +58,7 @@ public class Main {
 
 
         for (; ; ) {
-            bQueue.broadcastUpdate(new LikeUpdate("Amanda White", "Aaron", "http://images.gotinder.com/518d666a2a00df0e490000b9/84x84_pct_0_29.5312464_540_540_5c1d3231-5a75-4a07-91ff-5c012716583f.jpg"));
+            bQueue.broadcastUpdate(new LikeUpdate("Amanda White", 1, "http://images.gotinder.com/518d666a2a00df0e490000b9/84x84_pct_0_29.5312464_540_540_5c1d3231-5a75-4a07-91ff-5c012716583f.jpg"));
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
