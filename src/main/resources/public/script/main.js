@@ -34,6 +34,15 @@ $(function () {
                 $('#bot-select').append('<option value="' + botId + '">' + bots[botId].name + '</option>')
             }
             remap();
+
+            console.log("-------------------");
+            for (botId in bots) {
+                var bot = bots[botId];
+
+                for(var i=0; i < bot.matchedUsers.length; i++) {
+                    console.log(bot.matchedUsers[i].name);
+                }
+            }
         });
 
     function stream() {
