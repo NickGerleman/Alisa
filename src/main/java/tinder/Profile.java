@@ -7,6 +7,7 @@ public abstract class Profile {
 	public String profileName;
 	public String facebookCookie;
 	public String authCookie;
+	public String timestamp;
 	
 	public void updateAuthCookie(){
 		authCookie = Tinder.getAuthToken(facebookCookie);

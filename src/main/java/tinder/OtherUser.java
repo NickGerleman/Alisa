@@ -65,6 +65,6 @@ public class OtherUser {
 	public ArrayList<Photo> getPhotos() {
 		return photos;
 	}
-	
+
 
 }
