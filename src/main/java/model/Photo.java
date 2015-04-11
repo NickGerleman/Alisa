@@ -18,4 +18,17 @@ public class Photo extends JsonModel {
         this.url84=url84;
     }
 
+
+    @Override
+    public String toString() {
+        return "Photo{" +
+                "id='" + id + '\'' +
+                ", userId='" + userId + '\'' +
+                ", main=" + main +
+                ", url640='" + url640 + '\'' +
+                ", url320='" + url320 + '\'' +
+                ", url172='" + url172 + '\'' +
+                ", url84='" + url84 + '\'' +
+                '}';
+    }
 }
