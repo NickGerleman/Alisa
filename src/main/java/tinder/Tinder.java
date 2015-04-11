@@ -359,7 +359,6 @@ ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 		JSONParser parser = new JSONParser();
 		JSONObject json;
 		try {
@@ -384,6 +383,9 @@ ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
 					massages.add(new Message(toID,fromID,messageText));
 
 
+				}
+				if(matchID.equals("")){
+					matchID = id;
 				}
 				updates.add(new Update(id,massages,timestamp,matchID));
 			}
@@ -438,7 +440,7 @@ ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
 			System.out.println(arr.get(i));
 		}
 		String daniel = "54ca7af5eed36d21180a3aff5529692e2bcf0989376e66ef";
-		sendMessage(daniel, authToken, "A toddler could literally get lost down there");
+		sendMessage(daniel, authToken, "I'm a real boy");
 		System.out.println();
 	}
 
