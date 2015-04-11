@@ -369,18 +369,23 @@ ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
 			for(int i = 0;i<arr.size();i++){
 				JSONObject updated = (JSONObject) arr.get(i);
 				String id = (String) updated.get("_id");
+				ArrayList<Message> massages = new ArrayList<Message>();
 				JSONArray messages = (JSONArray) updated.get("messages");
+				long timestamp = 0;
+				String matchID = "";
 				for(int j = 0; j<messages.size();j++){
 					JSONObject message = (JSONObject) messages.get(j);
 					String fromID = (String) message.get("from");
 					String messageID = (String) message.get("_id)");
 					String toID = (String) message.get("to");
-					String matchID = (String) message.get("match_id");
+					matchID = (String) message.get("match_id");
 					String messageText = (String) message.get("message");
-					long timestamp = Long.parseLong(message.get("timestamp").toString());
-					updates.add(new Update(id, toID, fromID, messageText, timestamp, matchID));
+					timestamp = Long.parseLong(message.get("timestamp").toString());
+					massages.add(new Message(toID,fromID,messageText));
+
 
 				}
+				updates.add(new Update(id,massages,timestamp,matchID));
 			}
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
@@ -391,7 +396,7 @@ ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
 		return updates;
 	}
 	
-	public boolean sendMessage(String id, String tinderToken, String message){
+	public static boolean sendMessage(String id, String tinderToken, String message){
 		boolean success = true;
 		CloseableHttpClient httpclient = HttpClientBuilder.create().build();
 		StringBuilder sb = new StringBuilder();
@@ -401,10 +406,11 @@ ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
 		setHeaders(post,tinderToken);
 		
 		sb.setLength(0);
-		sb.append("\"{\"message\": \"");//IDGAF
-		sb.append(message.replaceAll("\"","\\\""));
+		sb.append("{\"message\": \"");//IDGAF
+
+		sb.append(message);
 		sb.append("\"}");
-		
+		System.out.println(sb.toString());
 		try {
 			post.setEntity(new StringEntity(sb.toString()));
 		} catch (UnsupportedEncodingException e) {
@@ -423,14 +429,16 @@ ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
 		return success;
 	}
 	public static void main(String[] args){
-		String authToken = getAuthToken("CAAGm0PX4ZCpsBALjWakYVekZALrtnDuVr4QNbaCX10IZALOZBbU8WjAMrD7x9VMBOLjSUrJCLfHnfSUZAqRxRTU5AEZBmG3KPur1FGZAlDHmzIkFPY1ymmET6Tr32UMh9yOrDjxAx0pvvUjJMX40Dmp34emuC7nXa1MkQgP6JQbQuyp9Y4LoTNjkEZCVetEvLHJtpF09z4uIZBQZAwbcDKJb1H");
+		String authToken = getAuthToken("CAAGm0PX4ZCpsBANU9X4Ko87f2M4m3dsjrAV5bgZCWcZBn8NVRx0fgAtMrSUNwbzZAv5oPgdO2nkyjlraJJsapNpJhr1OfTLeR9biWHDaq60QMJ5RpGtWffoi5ZA901aL9ia7h6XjuzyYTZCjLKQZB6rjcd9SVRLhTZC1TVxA7ZAxm1GQY8DqkvZByezy4ibg9m2uvgpd40XJZCmghqLZAF3VDlpa");
 		//System.out.println("AuthToken=" + authToken);
 		ping(42.0301381,-93.6521859 , authToken);
-		List<Update> arr = update(authToken,"2015-04-11T08:32:21.016Z");
+		List<Update> arr = update(authToken, "2015-04-11T08:32:21.016Z");
 		List<OtherUser> arr2 = getUsers(authToken);
-		for(int i =0;i<arr2.size();i++){
-			System.out.println(arr2.get(i));
+		for(int i =0;i<arr.size();i++) {
+			System.out.println(arr.get(i));
 		}
+		String daniel = "54ca7af5eed36d21180a3aff5529692e2bcf0989376e66ef";
+		sendMessage(daniel, authToken, "A toddler could literally get lost down there");
 		System.out.println();
 	}
 

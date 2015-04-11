@@ -1,19 +1,17 @@
 package tinder;
 
+import java.util.ArrayList;
+
 public class Update {
 	String id;
-	String to;
-	String from;
-	String message;
+	ArrayList<Message> message;
 	long timestamp;
 	String matchID;
-	
-	public Update(String id, String to, String from, String message,
+
+	public Update(String id, ArrayList<Message> message,
 			long timestamp, String matchID) {
 		super();
 		this.id = id;
-		this.to = to;
-		this.from = from;
 		this.message = message;
 		this.timestamp = timestamp;
 		this.matchID = matchID;
@@ -21,13 +19,7 @@ public class Update {
 	public String getId() {
 		return id;
 	}
-	public String getTo() {
-		return to;
-	}
-	public String getFrom() {
-		return from;
-	}
-	public String getMessage() {
+	public ArrayList<Message> getMessage() {
 		return message;
 	}
 	public long getTimestamp() {
@@ -41,11 +33,9 @@ public class Update {
 	public String toString() {
 		return "Update{" +
 				"id='" + id + '\'' +
-				", to='" + to + '\'' +
-				", from='" + from + '\'' +
-				", message='" + message + '\'' +
 				", timestamp=" + timestamp +
 				", matchID='" + matchID + '\'' +
+				", message='" + message.size() + '\'' +
 				'}';
 	}
 }
