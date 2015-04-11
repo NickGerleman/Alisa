@@ -126,6 +126,15 @@ nav h1 {
     vertical-align: middle;
 }
 
+.matchdiv {
+    float: left;
+    padding: 11px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100px;
+    text-align: center;
+}
+
 #map {
     top: -464px;
     position: fixed !important;
