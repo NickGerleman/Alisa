@@ -37,6 +37,7 @@ public class BroadcastQueue {
         String id = request.session(true).id();
         if (sessions.containsKey(id)) {
             sessions.get(id).setReq(request);
+            sessions.changeTimeout(id, Duration.ofMinutes(30));
         } else {
             sessions.putWithTimeout(id, new Session(id, request), Duration.ofMinutes(30));
         }
@@ -64,6 +65,7 @@ public class BroadcastQueue {
         private final String sessionId;
         private final Deque<JsonModel> updateQueue = new ArrayDeque<>();
         private AsyncContext context;
+        private int connCount = 0;
 
         public Session(String sessionId, Request req) {
             this.sessionId = sessionId;
@@ -71,6 +73,7 @@ public class BroadcastQueue {
         }
 
         public void setReq(Request req) {
+            connCount++;
             this.context = req.raw().startAsync();
             context.getResponse().setContentType("text/json");
             context.addListener(new AsyncListener() {
@@ -97,15 +100,15 @@ public class BroadcastQueue {
                 }
 
                 private void startTimeout() {
-                    context = null;
-                    sessions.putWithTimeout(sessionId, Session.this, Duration.ofSeconds(30));
+                    connCount--;
+                    sessions.changeTimeout(sessionId, Duration.ofSeconds(30));
                 }
             });
         }
 
         public void queueOrSendUpdate(JsonModel update) {
             updateQueue.addLast(update);
-            if (context != null) {
+            if (connCount != 0) {
                 sendUpdates();
             }
         }

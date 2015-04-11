@@ -1,0 +1,140 @@
+@import url(http://fonts.googleapis.com/css?family=Lobster);
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #48668a;
+}
+
+nav {
+    background: #3a5a77;
+    height: 64px;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    box-shadow: 0 0  5px 2px rgba(0, 0, 0, 0.5);
+    color: white;
+    text-align: right;
+    z-index: 2;
+}
+
+nav > * {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+nav h1 {
+    position: absolute;
+    left: 50px;
+    font-family: Lobster, Arial, Helvetica, sans-serif;
+    margin: 0;
+    line-height: 64px;
+    font-size: 36px;
+    display: inline;
+}
+
+#bots {
+    margin-right: 30px;
+    font-size: 16px;
+}
+
+#bots span {
+    padding-right: 5px;
+}
+
+#bots > * {
+    display: inline-block;
+    line-height: 64px;
+    vertical-align: middle;
+}
+
+#bots select {
+    width: 120px;
+    height: 28px;
+    background: white;
+    opacity: 0.6;
+}
+
+#relocate {
+    margin-right: 20px;
+    line-height: 64px;
+    font-size: 28px;
+    cursor: pointer;
+    transition: 0.3s all;
+}
+
+#relocate:hover {
+    color: #aaa;
+    transform: scale(1.1);
+}
+
+#stream {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow: scroll;
+    background-color: #6C8EC3;
+    float: right;
+    width: 250px;
+    height: 100%;
+    box-shadow: 0 0  5px 2px rgba(0, 0, 0, 0.5);
+}
+
+.blurb {
+    flex: none;
+    margin: 5px;
+    max-height: 100%;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
+    transition: max-height 0.5s, transform 0.5s;
+}
+
+.like.blurb {
+    background: #666;
+}
+
+.blurb.initial {
+    max-height: 0;
+    transform: scale(0);
+}
+
+.blurb-table {
+    display: table;
+}
+
+.blurb-text {
+    padding: 5px;
+    width: 100%;
+    font-size: 14px;
+    text-shadow: 0 1px #666;
+    color: #eee;
+}
+
+.blurb img {
+    padding: 5px;
+    width: 64px;
+    height: 64px;
+    background: #555;
+}
+
+.blurb-table > * {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+#map {
+    top: -464px;
+    position: fixed !important;
+    right: 0;
+    width: 400px;
+    height: 400px;
+    background: white;
+    border-radius: 3px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s;
+    z-index: 1;
+}
+
+#map.active {
+    top: 64px;
+}
