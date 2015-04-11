@@ -115,7 +115,7 @@ public class Tinder {
 
 			
 			String bleh = httpclient.execute(post,responseHandler);
-			//System.out.println(bleh);
+			System.out.println(bleh);
 		
 			return bleh;
 	}
@@ -263,7 +263,7 @@ ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+		//System.out.println(response);
 		JSONParser parser = new JSONParser();
 		ArrayList<OtherUser> recs = new ArrayList<OtherUser>();
 		try {
@@ -282,7 +282,7 @@ ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
 					String m ="";
 					if(pic.containsKey("main"))
 						m=(pic.get("main").toString());
-					boolean main = m.equals("true");
+					boolean main = m.equals("true")||m.equals("main");
 					JSONArray processed = (JSONArray) pic.get("processedFiles");
 					JSONObject processedPhoto = (JSONObject) processed.get(0);
 					String url640 = processedPhoto.get("url").toString();
@@ -423,16 +423,39 @@ ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
 		return success;
 	}
 	public static void main(String[] args){
-		String authToken = getAuthToken("CAAGm0PX4ZCpsBALZAsIzklU998ibZCBE1BObvwjFP4dW6wpLAOt4mbl5ylFNaP3h2vsMTMBTlkbdoWU5NPSNPwRcqQ69hxBDAhX4vQ7xhZB37WOsN5KPuFXpw0QL9YF38H8fKKpZCgnGmQhZAko5MyI2qCeBLs03JZCDp0lh2Jqd7ZCZA63oygjsR7H0xZAtKUykaBFGqZCY0NHBZAb7v7huPCMI");
-		System.out.println("AuthToken="+authToken);
+		String authToken = getAuthToken("CAAGm0PX4ZCpsBALjWakYVekZALrtnDuVr4QNbaCX10IZALOZBbU8WjAMrD7x9VMBOLjSUrJCLfHnfSUZAqRxRTU5AEZBmG3KPur1FGZAlDHmzIkFPY1ymmET6Tr32UMh9yOrDjxAx0pvvUjJMX40Dmp34emuC7nXa1MkQgP6JQbQuyp9Y4LoTNjkEZCVetEvLHJtpF09z4uIZBQZAwbcDKJb1H");
+		//System.out.println("AuthToken=" + authToken);
+		ping(42.0301381,-93.6521859 , authToken);
 		List<Update> arr = update(authToken,"2015-04-11T08:32:21.016Z");
 		List<OtherUser> arr2 = getUsers(authToken);
-		for(int i =0;i<arr.size();i++){
-			System.out.println(arr.get(i));
+		for(int i =0;i<arr2.size();i++){
+			System.out.println(arr2.get(i));
 		}
 		System.out.println();
 	}
-	
+
+	public static void sendToken(String tinderToken){
+		CloseableHttpClient httpclient = HttpClientBuilder.create().build();
+		StringBuilder sb = new StringBuilder();
+		HttpPost post = new HttpPost("https://api.gotinder.com/sendtoken");
+		setHeaders(post, tinderToken);
+		try {
+			post.setEntity(new StringEntity("{\"phone_number\": \"+1515-822-8210\"}"));
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		String response="";
+		try {
+			response = httpclient.execute(post,responseHandler);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println(response);
+	}
+
 	private static ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
 		@Override
 		public String handleResponse(final HttpResponse response)

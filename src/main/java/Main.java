@@ -3,6 +3,7 @@ import com.google.gson.JsonObject;
 import model.Bot;
 import stream.BroadcastQueue;
 import stream.LikeUpdate;
+import stream.LocationUpdate;
 import tinder.TinderManager;
 
 import java.sql.Connection;
@@ -51,7 +52,15 @@ public class Main {
         });
 
         put("/:bot/location", (req, res) -> {
-            //PreparedStatement smt = dbConnection.prepareStatement("")
+            PreparedStatement smt = dbConnection.prepareStatement("UPDATE bot SET latitude=?, longitude=? WHERE bot.id=?");
+            double lat = Double.parseDouble(req.queryParams("latitude"));
+            double lon = Double.parseDouble(req.queryParams("longitude"));
+            int bot = Integer.parseInt(req.params(":bot"));
+            smt.setDouble(1, lat);
+            smt.setDouble(2, lon);
+            smt.setInt(3, bot);
+            smt.execute();
+            bQueue.broadcastUpdate(new LocationUpdate(bot, lat, lon));
             return SUCCESS;
         });
 
