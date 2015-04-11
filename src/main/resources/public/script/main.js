@@ -51,7 +51,10 @@ $(function () {
                 $('#content').append('<div class="matchtab" id="tab_' + bot.name + '">');
 
                 for(var i=0; i < bot.matchedUsers.length; i++) {
-                    $('#tab_'+bot.name).append('<div><h1>' + bot.matchedUsers[i].name + '</h1></div>');
+                    photo = getMainPhoto(bot.matchedUsers[i].photos);
+
+                    if(photo != undefined)
+                        $('#tab_'+bot.name).append('<div class="matchdiv"><img src="' + photo.url84 + '"></img><h2>' + bot.matchedUsers[i].name + '</h2></div>');
                 }
 
                 $('#content').append('</div>');
@@ -62,6 +65,12 @@ $(function () {
                 }
             }
         });
+
+    function getMainPhoto(photos) {
+	return (photos.filter(function(photo) {
+            return photo.main;
+        })[0] || photos[0]);
+    }
 
     function stream() {
         $.post("/stream")
