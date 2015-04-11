@@ -49,16 +49,17 @@ $(function () {
         $.post("/stream")
             .done(function (obj) {
                 obj.updates.forEach(function (update) {
+                    if (update.type == "location") {
+                        bots[update.bot].latitude = update.latitude;
+                        bots[update.bot].longitude = update.longitude;
+                        remap();
+                        return;
+                    }
                     if (!blurbQueues[update.bot]) {
                         blurbQueues[update.bot] = [];
                     }
                     blurbQueues[update.bot].push(update);
                 });
-                if (update.type == "location") {
-                    bots[update.bot].latitude = update.latitude;
-                    bots[update.bot].longitude = update.longitude;
-                    remap();
-                }
                 stream();
             })
             .fail(function () {
@@ -131,7 +132,7 @@ $(function () {
     function matchBlurb(update) {
         var mainPhoto = (update.user.photos.filter(function(photo) {
             return photo.main;
-        })[0] || update.user.photos[0]).url84;
+        })[0] || update.user.photos[0]);
         return blurb('match', "Matched With " + update.user.name, mainPhoto.url84);
     }
 });
