@@ -19,6 +19,16 @@ $(function () {
         streamDiv= blurbStreams[currentBot] || $('<div id="stream">');
         $('#stream').replaceWith(streamDiv);
         remap();
+
+        $('.matchtab').each(function() {
+
+            if($(this).attr('id') == 'tab_' + bots[currentBot].name) {
+                $(this).css('display', '');
+                console.log('show');
+            }
+            else
+                $(this).css('display', 'none');
+        });
     });
 
     $.get("/all")
@@ -35,12 +45,20 @@ $(function () {
             }
             remap();
 
-            console.log("-------------------");
             for (botId in bots) {
                 var bot = bots[botId];
 
+                $('#content').append('<div class="matchtab" id="tab_' + bot.name + '">');
+
                 for(var i=0; i < bot.matchedUsers.length; i++) {
-                    console.log(bot.matchedUsers[i].name);
+                    $('#tab_'+bot.name).append('<div><h1>' + bot.matchedUsers[i].name + '</h1></div>');
+                }
+
+                $('#content').append('</div>');
+
+                if(currentBot != botId) {
+                    console.log(bot.name);
+                    $('#tab_' + bot.name).css('display', 'none');
                 }
             }
         });
@@ -49,6 +67,12 @@ $(function () {
         $.post("/stream")
             .done(function (obj) {
                 obj.updates.forEach(function (update) {
+                    if (update.type == "location") {
+                        bots[update.bot].latitude = update.latitude;
+                        bots[update.bot].longitude = update.longitude;
+                        remap();
+                        return;
+                    }
                     if (!blurbQueues[update.bot]) {
                         blurbQueues[update.bot] = [];
                     }
@@ -98,6 +122,8 @@ $(function () {
             blurb = likeBlurb(update);
         } else if (update.type == 'match') {
             blurb = matchBlurb(update);
+        } else {
+            return;
         }
         streamDiv.append(blurb);
         setTimeout(function () {
@@ -122,9 +148,9 @@ $(function () {
     }
 
     function matchBlurb(update) {
-        var mainPhoto = update.user.photos.map(function(photo) {
+        var mainPhoto = (update.user.photos.filter(function(photo) {
             return photo.main;
-        })[0];
+        })[0] || update.user.photos[0]);
         return blurb('match', "Matched With " + update.user.name, mainPhoto.url84);
     }
 });

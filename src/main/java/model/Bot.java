@@ -72,6 +72,9 @@ public class Bot extends JsonModel {
                     rs.getInt("age")
             ));
         }
+        for (User user : matchedUsers) {
+            user.retrievePhotos(conn);
+        }
     }
 
     public String getName() {

@@ -144,5 +144,8 @@ nav h1 {
 }
 
 #content {
-    padding-top: 80px;
+    margin-top: 80px;
+    margin-right: 255px;
+    overflow: auto;
+    height: 100%;
 }
