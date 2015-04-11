@@ -59,7 +59,18 @@ public class User extends JsonModel {
     }
 
     public static User get(String id, Connection conn) throws SQLException {
-
+        PreparedStatement smt = conn.prepareStatement("SELECT * FROM \"user\" WHERE id = ?");
+        smt.setString(1, id);
+        ResultSet rs = smt.executeQuery();
+        if (rs.next()) {
+            return new User(
+                    rs.getString("id"),
+                    rs.getString("name"),
+                    rs.getInt("gender"),
+                    rs.getInt("age")
+            );
+        }
+        return null;
     }
 
     public String getId() {

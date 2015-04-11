@@ -7,7 +7,6 @@ import model.User;
 import stream.BroadcastQueue;
 import stream.LikeUpdate;
 import stream.MatchUpdate;
-import stream.MessageUpdate;
 
 import java.sql.*;
 import java.time.Duration;
@@ -54,39 +53,44 @@ public class TinderManager {
         bots.forEach((bot) -> jobPool.schedule(() -> {
             try {
                 Timestamp lastUpdated = getTimestamp(connection, bot.getId());
-                if (lastUpdated != null) {
+                if (lastUpdated == null) {
                     lastUpdated = Timestamp.from(Instant.now().minus(Duration.ofDays(7)));
                 }
                 CleverbotProfile profile = new CleverbotProfile(bot.getName(), bot.getAuthToken());
                 List<Update> updates = profile.getUpdates(lastUpdated.toInstant().toString());
                 for (Update update : updates) {
                     try {
-                        User user = User.get(update.getId(), connection);
+                        String theirId = update.getId().replace(bot.getTinderId(), "");
+                        User user = User.get(theirId, connection);
+                        // Fix Later
+                        if (user == null) {
+                            continue;
+                        }
                         OtherUser otherUser = new OtherUser(
                                 user.getId(),
                                 user.getGender(),
                                 user.getName(),
                                 user.getPhotos(),
-                                Instant.now().minus(Duration.of(user.getAge(), ChronoUnit.YEARS)).toString()
+                                Instant.now().minus(user.getAge() * 60 * 60 * 24 * 365, ChronoUnit.SECONDS).toString()
                         );
                         addMatch(bot, otherUser, connection);
                         for (Message message : update.getMessage()) {
                             PreparedStatement smt = connection.prepareStatement("INSERT INTO message(id, text, \"timestamp\", from_id, to_id) VALUES (?, ?, ?, ?, ?)" );
-                            smt.setString(1, "1");
+                            smt.setString(1, message.getMessageID());
                             smt.setString(2, message.getMessage());
-                            smt.setString(3, "3");
+                            smt.setTimestamp(3, new Timestamp(message.getTimestamp()));
                             smt.setString(4, message.getFromID());
                             smt.setString(5, message.getToID());
                             smt.execute();
-                            model.Message updateMessage = new model.Message("1", message.getFromID(), message.getToID(), message.getMessage(), Timestamp.from(Instant.now()));
+                            model.Message updateMessage = new model.Message("1", message.getFromID(), message.getToID(), message.getMessage(), new Timestamp(message.getTimestamp()));
                             bQueue.broadcastUpdate(updateMessage);
                         }
-                    } catch (SQLException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
                 updateTimestamp(connection, bot.getId());
-            } catch (SQLException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }, 6, TimeUnit.SECONDS));
@@ -94,8 +98,13 @@ public class TinderManager {
     }
 
     private void addUser(OtherUser user, Connection conn) throws SQLException {
+        PreparedStatement smt = conn.prepareStatement("SELECT * FROM \"user\" WHERE id = ?");
+        smt.setString(1, user.getId());
+        if (smt.execute()) {
+            return;
+        }
         int age = (int)(Duration.between(Instant.parse(user.getBirthday()), Instant.now()).get(ChronoUnit.SECONDS) / 60 / 60 / 24 / 365);
-        PreparedStatement smt = conn.prepareStatement("INSERT INTO \"user\"(id, gender, age, name) VALUES(?, ?, ?, ?)");
+        smt = conn.prepareStatement("INSERT INTO \"user\"(id, gender, age, name) VALUES(?, ?, ?, ?)");
         smt.setString(1, user.getId());
         smt.setInt(2, user.getGenderNumber());
         smt.setInt(3, age);
@@ -115,9 +124,15 @@ public class TinderManager {
     }
 
     private void addMatch(Bot bot, OtherUser user, Connection conn) throws SQLException {
+        PreparedStatement smt = conn.prepareStatement("SELECT * FROM match where bot_id = ? AND user_id = ?");
+        smt.setInt(1, bot.getId());
+        smt.setString(2, user.getId());
+        if (smt.execute()) {
+            return;
+        }
         int age = (int)(Duration.between(Instant.parse(user.getBirthday()), Instant.now()).get(ChronoUnit.SECONDS) / 60 / 60 / 24 / 365);
         addUser(user, conn);
-        PreparedStatement smt = conn.prepareStatement("INSERT INTO match(bot_id, user_id) VALUES (?, ?)");
+        smt = conn.prepareStatement("INSERT INTO match(bot_id, user_id) VALUES (?, ?)");
         smt.setInt(1, bot.getId());
         smt.setString(2, user.getId());
         smt.execute();
@@ -129,13 +144,20 @@ public class TinderManager {
     private void updateTimestamp(Connection conn, int botId) throws SQLException {
         PreparedStatement smt = conn.prepareStatement("UPDATE \"update\" SET time=current_timestamp WHERE bot_id = ?");
         smt.setInt(1, botId);
-        smt.execute();
+        if (!smt.execute()) {
+            smt = conn.prepareStatement("INSERT INTO \"update\"(time, bot_id) VALUES (CURRENT_TIMESTAMP , ?)");
+            smt.setInt(1, botId);
+            smt.execute();
+        }
     }
 
     private Timestamp getTimestamp(Connection conn, int botId) throws SQLException {
         PreparedStatement smt = conn.prepareStatement("SELECT * FROM \"update\" WHERE bot_id = ? ORDER BY \"time\" DESC LIMIT 1");
         smt.setInt(1, botId);
         ResultSet rs = smt.executeQuery();
-        return rs == null ? null : rs.getTimestamp("time");
+        if (!rs.next()) {
+            return null;
+        }
+        return rs.getTimestamp("time");
     }
 }
