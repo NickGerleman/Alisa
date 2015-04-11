@@ -158,3 +158,32 @@ nav h1 {
     overflow: auto;
     height: 100%;
 }
+
+#chatPopup {
+    position: fixed;
+    top: 30px;
+    right: 30px;
+    width: calc(100% - 60px);
+    height: calc(100% - 60px);
+    z-index:666;
+    background: white;
+}
+
+#popupPhotos {
+    z-index: 667;
+    background: black;
+    width: 50px;
+    height: 50px;
+    margin: auto;
+}
+
+#textWindow {
+    z-index: 668;
+}
+
+#exitButton {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    z-index: 669;
+}
