@@ -3,6 +3,7 @@ package stream;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import model.JsonModel;
 import spark.Request;
 import util.ConcurrentTimeoutMap;
 
@@ -25,7 +26,7 @@ import java.util.concurrent.Future;
 public class BroadcastQueue {
     private ExecutorService jobPool;
     private ConcurrentTimeoutMap<String, Session> sessions = new ConcurrentTimeoutMap<>();
-    private ConcurrentLinkedDeque<Update> broadcastQueue = new ConcurrentLinkedDeque<>();
+    private ConcurrentLinkedDeque<JsonModel> broadcastQueue = new ConcurrentLinkedDeque<>();
     private Optional<Future> broadcastFuture = Optional.empty();
 
     public BroadcastQueue(ExecutorService jobPool) {
@@ -41,7 +42,7 @@ public class BroadcastQueue {
         }
     }
 
-    public void broadcastUpdate(Update update) {
+    public void broadcastUpdate(JsonModel update) {
         broadcastQueue.addLast(update);
         if (!broadcastFuture.isPresent() || broadcastFuture.get().isDone()) {
             sendBroadcast();
@@ -51,7 +52,7 @@ public class BroadcastQueue {
     private void sendBroadcast() {
         broadcastFuture = Optional.of(jobPool.submit(() -> {
             while (!broadcastQueue.isEmpty()) {
-                Update toBroadcast = broadcastQueue.pollFirst();
+                JsonModel toBroadcast = broadcastQueue.pollFirst();
                 for (Session session : sessions.values()) {
                     session.queueOrSendUpdate(toBroadcast);
                 }
@@ -61,7 +62,7 @@ public class BroadcastQueue {
 
     private class Session {
         private final String sessionId;
-        private final Deque<Update> updateQueue = new ArrayDeque<>();
+        private final Deque<JsonModel> updateQueue = new ArrayDeque<>();
         private AsyncContext context;
 
         public Session(String sessionId, Request req) {
@@ -102,7 +103,7 @@ public class BroadcastQueue {
             });
         }
 
-        public void queueOrSendUpdate(Update update) {
+        public void queueOrSendUpdate(JsonModel update) {
             updateQueue.addLast(update);
             if (context != null) {
                 sendUpdates();

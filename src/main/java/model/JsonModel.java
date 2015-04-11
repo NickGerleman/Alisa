@@ -1,11 +1,11 @@
-package stream;
+package model;
 
 import com.google.gson.Gson;
 
 /**
  * Abstract class for updates streamed
  */
-public abstract class Update {
+public abstract class JsonModel {
     public String toJson() {
         return new Gson().toJson(this);
     }
