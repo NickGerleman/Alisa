@@ -53,8 +53,6 @@ $(function () {
     }
 
     function remap() {
-        console.log(bots);
-        console.log(currentBot);
         var domMap = $('#map');
         var map = $('<div id="map">');
         if (domMap.hasClass('active')) {

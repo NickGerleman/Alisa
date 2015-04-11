@@ -7,7 +7,7 @@ import model.User;
  * Created by nick on 4/11/15.
  */
 public class MatchUpdate extends JsonModel {
-    private final String type = "like";
+    private final String type = "match";
     private final int bot;
     private final User user;
 

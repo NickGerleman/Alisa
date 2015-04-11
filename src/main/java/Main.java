@@ -7,6 +7,7 @@ import tinder.TinderManager;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.Duration;
 import java.time.Instant;
@@ -50,7 +51,7 @@ public class Main {
         });
 
         put("/:bot/location", (req, res) -> {
-            // Change thing
+            //PreparedStatement smt = dbConnection.prepareStatement("")
             return SUCCESS;
         });
 

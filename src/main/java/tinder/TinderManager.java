@@ -14,8 +14,6 @@ import java.sql.SQLException;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalAmount;
-import java.time.temporal.TemporalUnit;
 import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -63,6 +61,17 @@ public class TinderManager {
         smt.setInt(3, age);
         smt.setString(4, user.getName());
         smt.execute();
+        for (Photo photo : user.getPhotos()) {
+            smt = conn.prepareStatement("INSERT INTO photo(id, user_id, main, url_640, url_320, url_172, url_84) VALUES (?, ?, ?, ?, ?, ?, ?)");
+            smt.setString(1, photo.getId());
+            smt.setString(2, user.getId());
+            smt.setBoolean(3, photo.isMain());
+            smt.setString(4, photo.getUrl640());
+            smt.setString(5, photo.getUrl320());
+            smt.setString(6, photo.getUrl172());
+            smt.setString(7, photo.getUrl84());
+            smt.execute();
+        }
         smt = conn.prepareStatement("INSERT INTO match(bot_id, user_id) VALUES (?, ?)");
         smt.setInt(1, bot.getId());
         smt.setString(2, user.getId());
