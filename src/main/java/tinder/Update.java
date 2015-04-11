@@ -36,5 +36,16 @@ public class Update {
 	public String getMatchId(){
 		return matchID;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "Update{" +
+				"id='" + id + '\'' +
+				", to='" + to + '\'' +
+				", from='" + from + '\'' +
+				", message='" + message + '\'' +
+				", timestamp=" + timestamp +
+				", matchID='" + matchID + '\'' +
+				'}';
+	}
 }

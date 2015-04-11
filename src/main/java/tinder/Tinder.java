@@ -276,10 +276,13 @@ ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
 				int gender = Integer.parseInt(person.get("gender").toString());
 				ArrayList<Photo> photos = new ArrayList<Photo>();
 				JSONArray phot = (JSONArray) person.get("photos");
-				String mainPhoto = "";
+				String birthdate = person.get("birth_date").toString();
 				for(int j=0;j<phot.size();j++){
 					JSONObject pic = (JSONObject) phot.get(j);
-					boolean main = pic.get("main").toString().equals("true");
+					String m ="";
+					if(pic.containsKey("main"))
+						m=(pic.get("main").toString());
+					boolean main = m.equals("true");
 					JSONArray processed = (JSONArray) pic.get("processedFiles");
 					JSONObject processedPhoto = (JSONObject) processed.get(0);
 					String url640 = processedPhoto.get("url").toString();
@@ -295,7 +298,7 @@ ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
 				}
 				
 				//System.out.println(id);
-				recs.add(new OtherUser(id,gender,name,photos,mainPhoto));
+				recs.add(new OtherUser(id,gender,name,photos,birthdate));
 			}
 			
 			//System.out.println(token);
@@ -332,15 +335,26 @@ ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
 		return like;
 	}
 	
-	public static ArrayList<Update> update(String tinderToken){
+	public static ArrayList<Update> update(String tinderToken,String timeStamp){
 		ArrayList<Update> updates = new ArrayList<Update>();
 		CloseableHttpClient httpclient = HttpClientBuilder.create().build();
-		HttpGet get = new HttpGet("https://api.gotindaer.com/updates");
-		setHeaders(get,tinderToken);
-		
+		HttpPost post = new HttpPost("https://api.gotinder.com/updates");
+		setHeaders(post, tinderToken);
+		StringBuilder sb = new StringBuilder();
+		sb.append("{\"last_activity_date\":\"");
+		sb.append(timeStamp);
+		sb.append("\"}");
+
+		try {
+			post.setEntity(new StringEntity(sb.toString()));
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		String response = "";
 		try {
-			response = httpclient.execute(get,responseHandler);
+			response = httpclient.execute(post,responseHandler);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -350,6 +364,7 @@ ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
 		JSONObject json;
 		try {
 			json = (JSONObject) parser.parse(response);
+			System.out.println(response);
 			JSONArray arr = (JSONArray) json.get("matches");
 			for(int i = 0;i<arr.size();i++){
 				JSONObject updated = (JSONObject) arr.get(i);
@@ -410,7 +425,12 @@ ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
 	public static void main(String[] args){
 		String authToken = getAuthToken("CAAGm0PX4ZCpsBALZAsIzklU998ibZCBE1BObvwjFP4dW6wpLAOt4mbl5ylFNaP3h2vsMTMBTlkbdoWU5NPSNPwRcqQ69hxBDAhX4vQ7xhZB37WOsN5KPuFXpw0QL9YF38H8fKKpZCgnGmQhZAko5MyI2qCeBLs03JZCDp0lh2Jqd7ZCZA63oygjsR7H0xZAtKUykaBFGqZCY0NHBZAb7v7huPCMI");
 		System.out.println("AuthToken="+authToken);
-		System.out.println(getUsers(authToken));
+		List<Update> arr = update(authToken,"2015-04-11T08:32:21.016Z");
+		List<OtherUser> arr2 = getUsers(authToken);
+		for(int i =0;i<arr.size();i++){
+			System.out.println(arr.get(i));
+		}
+		System.out.println();
 	}
 	
 	private static ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
