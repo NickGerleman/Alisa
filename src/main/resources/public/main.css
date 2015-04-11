@@ -93,6 +93,10 @@ nav h1 {
     background: #666;
 }
 
+.match.blurb {
+    background: #C36666;
+}
+
 .blurb.initial {
     max-height: 0;
     transform: scale(0);
@@ -137,4 +141,8 @@ nav h1 {
 
 #map.active {
     top: 64px;
+}
+
+#content {
+    padding-top: 80px;
 }

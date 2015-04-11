@@ -11,6 +11,11 @@ import stream.MatchUpdate;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAmount;
+import java.time.temporal.TemporalUnit;
 import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -55,7 +60,8 @@ public class TinderManager {
         smt.setInt(1, bot.getId());
         smt.setString(2, user.getId());
         smt.execute();
-        User jsonUser = new User(user.getId(), user.getName(), user.getGenderNumber(), 18);
+        int age = (int)(Duration.between(Instant.parse(user.getBirthday()), Instant.now()).get(ChronoUnit.SECONDS) / 60 / 60 / 24 / 365);
+        User jsonUser = new User(user.getId(), user.getName(), user.getGenderNumber(), age);
         jsonUser.retrievePhotos(conn);
         bQueue.broadcastUpdate(new MatchUpdate(bot.getId(), jsonUser));
     }

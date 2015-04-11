@@ -41,7 +41,7 @@ public class Bot extends JsonModel {
 
     public static Bot get(Connection conn, int id) throws SQLException {
         Bot bot = null;
-        PreparedStatement smt = conn.prepareStatement("SELECT * FROM bot WHERE id = ?");
+        PreparedStatement smt = conn.prepareStatement("SELECT * FROM bot WHERE bot.id = ?");
         smt.setInt(1, id);
         ResultSet results = smt.executeQuery();
         if (results.next()) {
