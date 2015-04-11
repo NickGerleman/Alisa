@@ -24,7 +24,7 @@ public abstract class Profile {
 		return sucessful;
 	}
 	
-	public boolean autolike(int newLikes){
+	public List<OtherUser> autoLike(int newLikes){
 		boolean sucessful = false;
 		
 		List<OtherUser> recs = Tinder.getUsers(authCookie);
@@ -37,7 +37,7 @@ public abstract class Profile {
 		if(recs.size()>0)
 			sucessful = true;
 		
-		return sucessful;
+		return recs;
 	}
 	
 	public boolean sendMessage(String userID, String message){

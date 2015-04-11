@@ -1,6 +1,12 @@
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import model.Bot;
 import stream.BroadcastQueue;
 import stream.LikeUpdate;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -11,11 +17,14 @@ public class Main {
     public static final String SUCCESS = "{\"success\": true}";
     public static final String FAILURE = "{\"success\": false}";
 
-    public static void main(String[] kittensOnFire) {
+    public static void main(String[] kittensOnFire) throws SQLException, ClassNotFoundException {
 
         ScheduledExecutorService jobPool = Executors.newScheduledThreadPool(16);
         BroadcastQueue bQueue = new BroadcastQueue(jobPool);
         staticFileLocation("/public");
+
+        Class.forName("org.postgresql.Driver");
+        Connection dbConnection = DriverManager.getConnection("jdbc:postgresql://ec2-54-163-225-82.compute-1.amazonaws.com:5432/d22fcq21bok1ph?ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory", "efdsfdamscmvwq", "TDoX-BcUdEaLSTHqCbFWtNe3ZO");
 
         before((req, res) -> res.type("text/json"));
 
@@ -40,7 +49,11 @@ public class Main {
         });
 
         get("/all", (req, res) -> {
-            return "{}";
+            JsonObject response = new JsonObject();
+            JsonArray bots = new JsonArray();
+            Bot.all(dbConnection).forEach((bot) -> bots.add(bot.toJsonTree()));
+            response.add("bots", bots);
+            return response.toString();
         });
 
 
