@@ -18,7 +18,7 @@ public abstract class Profile {
 	}
 	
 	public boolean updateLocation(double lat, double lon){
-		return Tinder.ping(lat,lon,authCookie);
+		return Tinder.ping(lat, lon, authCookie);
 	}
 	
 	public List<Update> getUpdates(String timeStamp){
@@ -48,9 +48,13 @@ public abstract class Profile {
 	}
 	
 	public boolean sendMessage(String userID, String message){
-		boolean sucess = false;
-		
-		return sucess;
+		try {
+			Tinder.sendMessage(userID, authCookie, message);
+		}catch(Exception e){
+			updateAuthCookie();
+			return false;
+		}
+		return true;
 	}
 
 
