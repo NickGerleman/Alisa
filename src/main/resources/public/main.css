@@ -153,8 +153,10 @@ nav h1 {
 }
 
 #content {
-    margin-top: 80px;
-    margin-right: 255px;
+    position:fixed;
+    top: 64px;
+    right: 250px;
+    left: 0px;
     overflow: auto;
     height: 100%;
 }
@@ -171,10 +173,13 @@ nav h1 {
 
 #popupPhotos {
     z-index: 667;
-    background: black;
-    width: 50px;
-    height: 50px;
     margin: auto;
+    width: 688px;
+    overflow-x: auto;
+    height: 180px;
+    white-space: nowrap;
+    display: flex;
+    justify-content: center;
 }
 
 #textWindow {
@@ -186,4 +191,8 @@ nav h1 {
     top: 5px;
     right: 5px;
     z-index: 669;
+}
+
+.popupImg {
+    display: inline-block;
 }

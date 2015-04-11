@@ -6,12 +6,14 @@ $(function () {
     var bots = {};
     var currentBot;
 
+    $('#chatPopup').css('display', 'none');
     stream();
 
     $('#relocate').click(function() {
         "use strict";
         $('#map').toggleClass('active');
     });
+
 
     $('#bot-select').change(function() {
         blurbStreams[currentBot] = streamDiv;
@@ -29,6 +31,10 @@ $(function () {
             else
                 $(this).css('display', 'none');
         });
+    });
+
+    $('#exitButton').click(function() {
+        $('#chatPopup').css('display', 'none');
     });
 
     $.get("/all")
@@ -54,7 +60,7 @@ $(function () {
                     photo = getMainPhoto(bot.matchedUsers[i].photos);
 
                     if(photo != undefined)
-                        $('#tab_'+bot.name).append('<div class="matchdiv"><img src="' + photo.url84 + '"></img><h2>' + bot.matchedUsers[i].name + '</h2></div>');
+                        $('#tab_'+bot.name).append('<div userIndex="' + i + '" class="matchdiv"><img src="' + photo.url84 + '"></img><h2>' + bot.matchedUsers[i].name + '</h2></div>');
                 }
 
                 $('#content').append('</div>');
@@ -64,6 +70,21 @@ $(function () {
                     $('#tab_' + bot.name).css('display', 'none');
                 }
             }
+
+            $('.matchdiv').click(function() {
+                var userIndex = $(this).attr('userIndex');
+
+                $('#chatPopup').css('display', '');
+                $('#popupPhotos').empty();
+
+                var user = bots[currentBot].matchedUsers[userIndex];
+
+                $('#popupPhotos').append('<div id="subPhotos">');
+                for(var i=0; i < user.photos.length; i++) {
+                    console.log('pic');
+                    $('#subPhotos').append('<img class="popupImg" src="' + user.photos[i].url172 + '"></img>');
+                }
+            });
         });
 
     function getMainPhoto(photos) {
