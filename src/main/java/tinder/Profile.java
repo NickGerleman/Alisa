@@ -58,6 +58,9 @@ public abstract class Profile {
 		return true;
 	}
 
+	public String initiateConversation(String userID){
+		return sendResponse(userID,"Hi");
+	}
 
 }
 
