@@ -7,6 +7,7 @@ import model.User;
 import stream.BroadcastQueue;
 import stream.LikeUpdate;
 import stream.MatchUpdate;
+import stream.MessageUpdate;
 
 import java.sql.*;
 import java.time.Duration;
@@ -74,7 +75,7 @@ public class TinderManager {
                         );
                         addMatch(bot, otherUser, connection);
                         for (Message message : update.getMessage()) {
-                            addMessage(message, connection);
+                            addMessage(message, connection, bot.getId());
                             if (!message.getFromID().equals(bot.getTinderId())) {
                                 //jobPool.schedule(() -> profile.sendResponse(message.getFromID(), message.getMessage()), new Random().nextInt(10) + 10, TimeUnit.SECONDS);
                             }
@@ -105,7 +106,7 @@ public class TinderManager {
 
     }
 
-    private void addMessage(Message message, Connection conn) throws SQLException {
+    private void addMessage(Message message, Connection conn, int botId) throws SQLException {
         PreparedStatement smt = conn.prepareStatement("SELECT * FROM message WHERE id = ?");
         smt.setString(1, message.getMessageID());
         if (smt.executeQuery().next()) {
@@ -118,7 +119,7 @@ public class TinderManager {
         smt.setString(4, message.getFromID());
         smt.setString(5, message.getToID());
         smt.execute();
-        model.Message updateMessage = new model.Message("1", message.getFromID(), message.getToID(), message.getMessage(), new Timestamp(message.getTimestamp()));
+        MessageUpdate updateMessage = new MessageUpdate(botId, new model.Message("1", message.getFromID(), message.getToID(), message.getMessage(), new Timestamp(message.getTimestamp())));
         bQueue.broadcastUpdate(updateMessage);
     }
 
