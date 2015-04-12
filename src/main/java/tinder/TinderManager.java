@@ -60,11 +60,11 @@ public class TinderManager {
                     try {
                         String theirId = update.getId().replace(bot.getTinderId(), "");
                         User user = User.get(theirId, connection);
-                        user.retrievePhotos(connection);
                         // Fix Later
                         if (user == null) {
                             continue;
                         }
+                        user.retrievePhotos(connection);
                         OtherUser otherUser = new OtherUser(
                                 user.getId(),
                                 user.getGender(),
