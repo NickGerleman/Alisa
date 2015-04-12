@@ -92,6 +92,7 @@ public class TinderManager {
             botRecords.getUsers().forEach((otherUser) -> {
                 try {
                     addUser(otherUser, connection);
+                    addMatch(bot, otherUser, connection);
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -128,17 +129,21 @@ public class TinderManager {
     private void addUser(OtherUser user, Connection conn) throws SQLException {
         PreparedStatement smt = conn.prepareStatement("SELECT * FROM \"user\" WHERE id = ?");
         smt.setString(1, user.getId());
-        if (smt.execute()) {
-            return;
+        if (!smt.execute()) {
+            int age = (int)(Duration.between(Instant.parse(user.getBirthday()), Instant.now()).get(ChronoUnit.SECONDS) / 60 / 60 / 24 / 365);
+            smt = conn.prepareStatement("INSERT INTO \"user\"(id, gender, age, name) VALUES(?, ?, ?, ?)");
+            smt.setString(1, user.getId());
+            smt.setInt(2, user.getGenderNumber());
+            smt.setInt(3, age);
+            smt.setString(4, user.getName());
+            smt.execute();
         }
-        int age = (int)(Duration.between(Instant.parse(user.getBirthday()), Instant.now()).get(ChronoUnit.SECONDS) / 60 / 60 / 24 / 365);
-        smt = conn.prepareStatement("INSERT INTO \"user\"(id, gender, age, name) VALUES(?, ?, ?, ?)");
-        smt.setString(1, user.getId());
-        smt.setInt(2, user.getGenderNumber());
-        smt.setInt(3, age);
-        smt.setString(4, user.getName());
-        smt.execute();
         for (Photo photo : user.getPhotos()) {
+            smt = conn.prepareStatement("SELECT * FROM photo WHERE id = ?");
+            smt.setString(1, photo.getId());
+            if (smt.execute()) {
+                return;
+            }
             smt = conn.prepareStatement("INSERT INTO photo(id, user_id, main, url_640, url_320, url_172, url_84) VALUES (?, ?, ?, ?, ?, ?, ?)");
             smt.setString(1, photo.getId());
             smt.setString(2, user.getId());
