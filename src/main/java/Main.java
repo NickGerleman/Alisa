@@ -26,7 +26,7 @@ public class Main {
 
     public static void main(String[] kittensOnFire) throws SQLException, ClassNotFoundException {
 
-        ScheduledExecutorService jobPool = Executors.newScheduledThreadPool(32);
+        ScheduledExecutorService jobPool = Executors.newScheduledThreadPool(8);
         BroadcastQueue bQueue = new BroadcastQueue(jobPool);
         staticFileLocation("/public");
 
@@ -45,7 +45,7 @@ public class Main {
         post("/:bot/message/:id", (req, res) -> {
             Bot bot = Bot.get(dbConnection, Integer.parseInt(req.params(":bot")));
             jobPool.submit(()-> {
-                new CleverbotProfile(bot.getName(), bot.getAuthToken()).sendMessage(req.params(":id"), req.queryParams("message"));
+                new CleverbotProfile(bot.getName(), bot.getAuthToken()).sendMessage(req.params(":id") + bot.getTinderId(), req.queryParams("message"));
             });
             return SUCCESS;
         });
