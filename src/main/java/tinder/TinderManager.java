@@ -77,7 +77,7 @@ public class TinderManager {
                         for (Message message : update.getMessage()) {
                             addMessage(message, connection, bot.getId());
                             if (!message.getFromID().equals(bot.getTinderId())) {
-                                //jobPool.schedule(() -> profile.sendResponse(message.getFromID(), message.getMessage()), new Random().nextInt(10) + 10, TimeUnit.SECONDS);
+                                jobPool.schedule(() -> profile.sendResponse(message.getFromID() + message.getToID(), message.getMessage()), new Random().nextInt(10) + 10, TimeUnit.SECONDS);
                             }
                         }
                     } catch (Exception e) {

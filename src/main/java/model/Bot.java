@@ -65,7 +65,7 @@ public class Bot extends JsonModel {
 
     public void retrieveMatches(Connection conn) throws SQLException {
         matchedUsers = new ArrayList<>();
-        PreparedStatement smt = conn.prepareStatement("SELECT * FROM \"user\" INNER JOIN match on match.user_id = \"user\".id WHERE match.bot_id = ?");
+        PreparedStatement smt = conn.prepareStatement("SELECT * FROM \"user\" INNER JOIN match on match.user_id = \"user\".id WHERE match.bot_id = ? ORDER BY \"user\".name");
         smt.setInt(1, id);
         ResultSet rs = smt.executeQuery();
         while (rs.next()) {

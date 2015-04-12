@@ -246,7 +246,7 @@ $(function () {
                     // bot found at index j of bot i
                     bot.matchedUsers[j].messages.push(update.message);
                             console.log('fuujfkadslfjdsalkjfasdjfasd');
-                    $('#textWindow').append('<div class="left">' + update.message.text + '</div>');
+                    $('#textWindow').append('<div class="left"><span class="chat-">' + update.message.text + '</div>');
                     break;
                 }
             }
