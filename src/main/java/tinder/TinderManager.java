@@ -13,6 +13,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -24,7 +25,7 @@ public class TinderManager {
         this.jobPool = jobPool;
         this.bQueue = bQueue;
 
-        bots.forEach((bot) -> jobPool.schedule(() -> {
+        jobPool.scheduleWithFixedDelay(() -> bots.forEach((bot) ->{
             CleverbotProfile profile = new CleverbotProfile(bot.getName(), bot.getAuthToken());
             profile.autoLike().forEach((user) -> {
                 try {
@@ -48,9 +49,9 @@ public class TinderManager {
                 JsonModel likeUpdate = new LikeUpdate(user.getName(), bot.getId(), mainPhoto.getUrl84());
                 bQueue.broadcastUpdate(likeUpdate);
             });
-        }, 30, TimeUnit.SECONDS));
+        }), 30, 30, TimeUnit.SECONDS);
 
-        bots.forEach((bot) -> jobPool.schedule(() -> {
+        jobPool.scheduleWithFixedDelay(() -> bots.forEach((bot) -> {
             try {
                 Timestamp lastUpdated = getTimestamp(connection, bot.getId());
                 if (lastUpdated == null) {
@@ -76,6 +77,9 @@ public class TinderManager {
                         addMatch(bot, otherUser, connection);
                         for (Message message : update.getMessage()) {
                             addMessage(message, connection);
+                            if (!message.getFromID().equals(bot.getTinderId())) {
+                                jobPool.schedule(() -> profile.sendResponse(message.getFromID(), message.getMessage()), new Random().nextInt(10) + 10, TimeUnit.SECONDS);
+                            }
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -85,13 +89,21 @@ public class TinderManager {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }, 6, TimeUnit.SECONDS));
+            }), 6, 6, TimeUnit.SECONDS);
 
-        bots.forEach((bot) -> jobPool.scheduleWithFixedDelay(() -> {
+//        jobPool.scheduleWithFixedDelay(() -> bots.forEach((bot)-> {
+//            PreparedStatement smt = connection.prepareStatement("SELECT id FROM \"user\" OUTER JOIN ON bWHERE ")
+//        }), 0, 10, TimeUnit.SECONDS);
+
+        jobPool.scheduleWithFixedDelay(() -> bots.forEach((bot) ->{
+            System.out.println("Starting Fix Job");
             Records botRecords = Tinder.parseAllUpdates(Tinder.getAuthToken(bot.getAuthToken()));
             botRecords.getUsers().forEach((otherUser) -> {
                 try {
+                    String shortened = otherUser.id.replace(bot.getTinderId(), "");
+                    otherUser.id = shortened;
                     addUser(otherUser, connection);
+                    addMatch(bot, otherUser, connection);
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -103,7 +115,8 @@ public class TinderManager {
                     e.printStackTrace();
                 }
             });
-        }, 0, 10, TimeUnit.MINUTES));
+            System.out.println("Ending Fix Job");
+            }), 0, 10, TimeUnit.MINUTES);
 
 
     }
@@ -111,7 +124,7 @@ public class TinderManager {
     private void addMessage(Message message, Connection conn) throws SQLException {
         PreparedStatement smt = conn.prepareStatement("SELECT * FROM message WHERE id = ?");
         smt.setString(1, message.getMessageID());
-        if (smt.execute()) {
+        if (smt.executeQuery().next()) {
             return;
         }
         smt = conn.prepareStatement("INSERT INTO message(id, text, \"timestamp\", from_id, to_id) VALUES (?, ?, ?, ?, ?)" );
@@ -128,17 +141,21 @@ public class TinderManager {
     private void addUser(OtherUser user, Connection conn) throws SQLException {
         PreparedStatement smt = conn.prepareStatement("SELECT * FROM \"user\" WHERE id = ?");
         smt.setString(1, user.getId());
-        if (smt.execute()) {
-            return;
+        if (!smt.executeQuery().next()) {
+            int age = (int)(Duration.between(Instant.parse(user.getBirthday()), Instant.now()).get(ChronoUnit.SECONDS) / 60 / 60 / 24 / 365);
+            smt = conn.prepareStatement("INSERT INTO \"user\"(id, gender, age, name) VALUES(?, ?, ?, ?)");
+            smt.setString(1, user.getId());
+            smt.setInt(2, user.getGenderNumber());
+            smt.setInt(3, age);
+            smt.setString(4, user.getName());
+            smt.execute();
         }
-        int age = (int)(Duration.between(Instant.parse(user.getBirthday()), Instant.now()).get(ChronoUnit.SECONDS) / 60 / 60 / 24 / 365);
-        smt = conn.prepareStatement("INSERT INTO \"user\"(id, gender, age, name) VALUES(?, ?, ?, ?)");
-        smt.setString(1, user.getId());
-        smt.setInt(2, user.getGenderNumber());
-        smt.setInt(3, age);
-        smt.setString(4, user.getName());
-        smt.execute();
         for (Photo photo : user.getPhotos()) {
+            smt = conn.prepareStatement("SELECT * FROM photo WHERE id = ?");
+            smt.setString(1, photo.getId());
+            if (smt.executeQuery().next()) {
+                continue;
+            }
             smt = conn.prepareStatement("INSERT INTO photo(id, user_id, main, url_640, url_320, url_172, url_84) VALUES (?, ?, ?, ?, ?, ?, ?)");
             smt.setString(1, photo.getId());
             smt.setString(2, user.getId());
@@ -155,7 +172,7 @@ public class TinderManager {
         PreparedStatement smt = conn.prepareStatement("SELECT * FROM match where bot_id = ? AND user_id = ?");
         smt.setInt(1, bot.getId());
         smt.setString(2, user.getId());
-        if (smt.execute()) {
+        if (smt.executeQuery().next()) {
             return;
         }
         int age = (int)(Duration.between(Instant.parse(user.getBirthday()), Instant.now()).get(ChronoUnit.SECONDS) / 60 / 60 / 24 / 365);
