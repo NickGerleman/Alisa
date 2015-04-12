@@ -3,17 +3,18 @@ package tinder;
 import model.Photo;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class OtherUser {
 	String id;
 	String gender;
 	int genderNumber;
 	String name;
-	ArrayList<Photo> photos;
+	List<Photo> photos;
 	String birthday;
     boolean matched;
 
-	public OtherUser(String id, String gender, String name, ArrayList<Photo> photos, String birthday){
+	public OtherUser(String id, String gender, String name, List<Photo> photos, String birthday){
 		this.id=id;
 		this.gender=gender;
 		if(gender.equals("female"))
@@ -25,7 +26,7 @@ public class OtherUser {
 		this.birthday=birthday;
 	}
 	
-	public OtherUser(String id, int gender, String name, ArrayList<Photo> photos, String birthday){
+	public OtherUser(String id, int gender, String name, List<Photo> photos, String birthday){
 		this.id=id;
 		this.genderNumber=gender;
 		if(gender==1)
@@ -69,7 +70,7 @@ public class OtherUser {
 	public String getBirthday(){
 		return birthday;
 	}
-	public ArrayList<Photo> getPhotos() {
+	public List<Photo> getPhotos() {
 		return photos;
 	}
 

@@ -153,8 +153,46 @@ nav h1 {
 }
 
 #content {
-    margin-top: 80px;
-    margin-right: 255px;
+    position:fixed;
+    top: 64px;
+    right: 250px;
+    left: 0px;
     overflow: auto;
-    height: 100%;
+    height: calc(100% - 64px);
+}
+
+#chatPopup {
+    position: fixed;
+    top: 30px;
+    right: 30px;
+    width: calc(100% - 60px);
+    height: calc(100% - 60px);
+    z-index:666;
+    background: white;
+}
+
+#popupPhotos {
+    z-index: 667;
+    margin: auto;
+    width: 688px;
+    overflow-x: auto;
+    height: 180px;
+    white-space: nowrap;
+    display: flex;
+    justify-content: center;
+}
+
+#textWindow {
+    z-index: 668;
+}
+
+#exitButton {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    z-index: 669;
+}
+
+.popupImg {
+    display: inline-block;
 }

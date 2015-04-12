@@ -4,6 +4,7 @@ import model.Bot;
 import stream.BroadcastQueue;
 import stream.LikeUpdate;
 import stream.LocationUpdate;
+import tinder.CleverbotProfile;
 import tinder.TinderManager;
 
 import java.sql.Connection;
@@ -25,7 +26,7 @@ public class Main {
 
     public static void main(String[] kittensOnFire) throws SQLException, ClassNotFoundException {
 
-        ScheduledExecutorService jobPool = Executors.newScheduledThreadPool(16);
+        ScheduledExecutorService jobPool = Executors.newScheduledThreadPool(32);
         BroadcastQueue bQueue = new BroadcastQueue(jobPool);
         staticFileLocation("/public");
 
@@ -55,12 +56,14 @@ public class Main {
             PreparedStatement smt = dbConnection.prepareStatement("UPDATE bot SET latitude=?, longitude=? WHERE bot.id=?");
             double lat = Double.parseDouble(req.queryParams("latitude"));
             double lon = Double.parseDouble(req.queryParams("longitude"));
-            int bot = Integer.parseInt(req.params(":bot"));
+            int botId = Integer.parseInt(req.params(":bot"));
             smt.setDouble(1, lat);
             smt.setDouble(2, lon);
-            smt.setInt(3, bot);
+            smt.setInt(3, botId);
             smt.execute();
-            bQueue.broadcastUpdate(new LocationUpdate(bot, lat, lon));
+            Bot bot = Bot.get(dbConnection, botId);
+            new CleverbotProfile(bot.getName(), bot.getAuthToken()).updateLocation(lat, lon);
+            bQueue.broadcastUpdate(new LocationUpdate(botId, lat, lon));
             return SUCCESS;
         });
 
