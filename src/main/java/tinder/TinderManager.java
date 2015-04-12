@@ -25,7 +25,7 @@ public class TinderManager {
         this.jobPool = jobPool;
         this.bQueue = bQueue;
 
-        jobPool.scheduleWithFixedDelay(() -> bots.forEach((bot) ->{
+        bots.forEach((bot) -> jobPool.scheduleWithFixedDelay(() ->{
             CleverbotProfile profile = new CleverbotProfile(bot.getName(), bot.getAuthToken());
             profile.autoLike().forEach((user) -> {
                 try {
@@ -49,9 +49,9 @@ public class TinderManager {
                 JsonModel likeUpdate = new LikeUpdate(user.getName(), bot.getId(), mainPhoto.getUrl84());
                 bQueue.broadcastUpdate(likeUpdate);
             });
-        }), 30, 30, TimeUnit.SECONDS);
+        }, 30, 30, TimeUnit.SECONDS));
 
-        jobPool.scheduleWithFixedDelay(() -> bots.forEach((bot) -> {
+        bots.forEach((bot) -> jobPool.scheduleWithFixedDelay(() -> {
             try {
                 String lastUpdated = getTimestamp(connection, bot.getId());
                 CleverbotProfile profile = new CleverbotProfile(bot.getName(), bot.getAuthToken());
@@ -83,39 +83,23 @@ public class TinderManager {
                     }
                 }
                 if (!updates.isEmpty()) {
-                    updateTimestamp(connection, bot.getId(), updates.get(0).lastActivityUpdate);
+                    String updateTime = updates.get(0).lastActivityUpdate;
+                    for (Update update : updates) {
+                        if (Instant.parse(update.getLastActivityUpdate()).compareTo(Instant.parse(updateTime)) > 0) {
+                            updateTime = update.getLastActivityUpdate();
+                        }
+                    }
+                    updateTimestamp(connection, bot.getId(), updateTime);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            }), 6, 6, TimeUnit.SECONDS);
+            }, 6, 6, TimeUnit.SECONDS));
 
 //        jobPool.scheduleWithFixedDelay(() -> bots.forEach((bot)-> {
 //            PreparedStatement smt = connection.prepareStatement("SELECT id FROM \"user\" OUTER JOIN ON bWHERE ")
 //        }), 0, 10, TimeUnit.SECONDS);
 
-        jobPool.scheduleWithFixedDelay(() -> bots.forEach((bot) -> {
-            System.out.println("Starting Fix Job");
-            Records botRecords = Tinder.parseAllUpdates(Tinder.getAuthToken(bot.getAuthToken()));
-            botRecords.getUsers().forEach((otherUser) -> {
-                try {
-                    String shortened = otherUser.id.replace(bot.getTinderId(), "");
-                    otherUser.id = shortened;
-                    addUser(otherUser, connection);
-                    addMatch(bot, otherUser, connection);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            });
-            botRecords.getMessages().forEach((message) -> {
-                try {
-                    addMessage(message, connection);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            });
-            System.out.println("Ending Fix Job");
-        }), 10, 10, TimeUnit.MINUTES);
 
 
     }
