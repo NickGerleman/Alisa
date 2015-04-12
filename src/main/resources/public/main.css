@@ -127,7 +127,7 @@ nav h1 {
 }
 
 .matchdiv {
-    float: left;
+    display: inline-block;
     padding: 11px;
     margin-left: auto;
     margin-right: auto;
@@ -184,6 +184,9 @@ nav h1 {
 
 #textWindow {
     z-index: 668;
+    margin: auto;
+    width: 700px;
+    height: 250px;
 }
 
 #exitButton {
@@ -195,4 +198,14 @@ nav h1 {
 
 .popupImg {
     display: inline-block;
+}
+
+.left {
+    text-align: left;
+    z-index: 669;
+}
+
+.right {
+    text-align: right;
+    z-index: 670;
 }
