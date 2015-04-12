@@ -51,7 +51,7 @@ public class CleverbotProfile extends Profile {
 		}
 		try {
 
-			System.out.println("Chatterbots = null?" + chatterbots==null);
+			//System.out.println("Chatterbots = null?" + chatterbots==null);
 			ChatterBotSession botsession  = chatterbots.get(userId);
 			response = botsession.think(theirMessage);
 			super.sendMessage(userId,response);
