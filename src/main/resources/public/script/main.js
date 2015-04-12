@@ -26,7 +26,6 @@ $(function () {
 
             if($(this).attr('id') == 'tab_' + bots[currentBot].name) {
                 $(this).css('display', '');
-                console.log('show');
             }
             else
                 $(this).css('display', 'none');
@@ -66,7 +65,6 @@ $(function () {
                 $('#content').append('</div>');
 
                 if(currentBot != botId) {
-                    console.log(bot.name);
                     $('#tab_' + bot.name).css('display', 'none');
                 }
             }
@@ -114,10 +112,14 @@ $(function () {
                         remap();
                         return;
                     }
+                    else if(update.type == "message") {
+                        messageUpdate(update);
+                    }
                     if (!blurbQueues[update.bot]) {
                         blurbQueues[update.bot] = [];
                     }
                     blurbQueues[update.bot].push(update);
+
                 });
                 stream();
             })
@@ -192,33 +194,42 @@ $(function () {
         var mainPhoto = (update.user.photos.filter(function(photo) {
             return photo.main;
         })[0] || update.user.photos[0]);
-        return blurb('match', "Matched With " + update.user.name, mainPhoto.url84);
+
+        if(mainPhoto != undefined)
+            return blurb('match', "Matched With " + update.user.name, mainPhoto.url84);
+        else
+            return blurb('match', "Matched With " + update.user.name, '');
     }
 
-    function messageBlurb(update) {
-        fromId = update.message.from;
-        toId = update.message.to;
+    function messageUpdate(update) {
+        console.log('message');
+        var fromId = update.message.from;
+        var toId = update.message.to;
 
-        bot = bot[0]; // not valid
-        found = false;
+        var bot = null; // not valid
+        var found = false;
 // algorithm banks on message having vaild bot tinder id
 
-        for(var i=0; i < bots.length; i++) {
-            if(bots[i].id == toId) {
-                bot = bots[i]; // bot found. flag to search for match using from id
+        for(sbot in bots) {
+            console.log('a');
+                var test = bots[sbot].tinderId;
+            if(bots[sbot].tinderId == toId) {
+                bot = bots[sbot]; // bot found. flag to search for match using from id
                 found = true;
                 break;
             }
         }
-        if(!found) {
-            for(var i=0; i < bots.length; i++) {
-                if(bots[i].id == fromId) {
-                    bot = bots[i];
+        if(found == false) {
+            console.log('not flagged');
+            for(sbot in bots) {
+                if(bots[sbot].tinderId == fromId) {
+                    bot = bots[sbot];
                     // bot found search for match using to id
                     for(var j=0; j < bot.matchedUsers.length; j++) {
-                        if(bot.matchedUsers[j] == toId) {
+                        if(bot.matchedUsers[j].id == toId) {
                             //match found at index j of bot i
                             bot.matchedUsers[j].messages.push(update.message);
+                            console.log('fuujfkadslfjdsalkjfasdjfasd');
                             $('#textWindow').append('<div class="right">' + update.message.text + '</div>');
                             break;
                         }
@@ -228,15 +239,18 @@ $(function () {
             }
         }
         else {
+            console.log('flagged');
             // search for match using from id
             for(var j=0; j < bot.matchedUsers.length; j++) {
-                if(bot.matchedUsers[j] == fromId) {
+                if(bot.matchedUsers[j].id == fromId) {
                     // bot found at index j of bot i
                     bot.matchedUsers[j].messages.push(update.message);
+                            console.log('fuujfkadslfjdsalkjfasdjfasd');
                     $('#textWindow').append('<div class="left">' + update.message.text + '</div>');
                     break;
                 }
             }
         }
+        $('#textWindow').scrollTop($('#textWindow')[0].scrollHeight);
     }
 });

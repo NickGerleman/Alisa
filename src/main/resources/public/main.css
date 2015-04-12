@@ -208,6 +208,7 @@ nav h1 {
     margin: auto;
     width: 700px;
     height: 250px;
+    overflow-y: auto;
 }
 
 #exitButton {
