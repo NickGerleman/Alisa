@@ -429,7 +429,7 @@ ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
 		String eliza = "CAAGm0PX4ZCpsBANU9X4Ko87f2M4m3dsjrAV5bgZCWcZBn8NVRx0fgAtMrSUNwbzZAv5oPgdO2nkyjlraJJsapNpJhr1OfTLeR9biWHDaq60QMJ5RpGtWffoi5ZA901aL9ia7h6XjuzyYTZCjLKQZB6rjcd9SVRLhTZC1TVxA7ZAxm1GQY8DqkvZByezy4ibg9m2uvgpd40XJZCmghqLZAF3VDlpa";
 		String aaron = "CAAGm0PX4ZCpsBALZAsIzklU998ibZCBE1BObvwjFP4dW6wpLAOt4mbl5ylFNaP3h2vsMTMBTlkbdoWU5NPSNPwRcqQ69hxBDAhX4vQ7xhZB37WOsN5KPuFXpw0QL9YF38H8fKKpZCgnGmQhZAko5MyI2qCeBLs03JZCDp0lh2Jqd7ZCZA63oygjsR7H0xZAtKUykaBFGqZCY0NHBZAb7v7huPCMI";
 
-		String authToken = getAuthToken(eliza);
+		String authToken = getAuthToken(hodor);
 		//System.out.println("AuthToken=" + authToken);
 		ping(42.0301381, -93.6521859, authToken);
 
@@ -438,7 +438,7 @@ ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
 		for(int i =0;i<arr.size();i++) {
 			System.out.println(arr.get(i));
 		}*/
-		/*
+/*
 		String daniel = "54ca7af5eed36d21180a3aff5529692e2bcf0989376e66ef";
 		sendMessage(daniel, authToken, "I'm a real boy");
 		System.out.println();*/
