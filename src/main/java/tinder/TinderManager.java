@@ -116,7 +116,7 @@ public class TinderManager {
                 }
             });
             System.out.println("Ending Fix Job");
-            }), 0, 10, TimeUnit.MINUTES);
+            }), 10, 10, TimeUnit.MINUTES);
 
 
     }
