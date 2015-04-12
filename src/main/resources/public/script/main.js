@@ -56,10 +56,10 @@ $(function () {
                 $('#content').append('<div class="matchtab" id="tab_' + bot.name + '">');
 
                 for(var i=0; i < bot.matchedUsers.length; i++) {
-                    photo = getMainPhoto(bot.matchedUsers[i].photos);
+                    var photo = getMainPhoto(bot.matchedUsers[i].photos);
 
                     if(photo != undefined)
-                        $('#tab_'+bot.name).append('<div userIndex="' + i + '" class="matchdiv"><img src="' + photo.url172 + '"></img><h3>' + bot.matchedUsers[i].name + '</h3><span class="msg-count">' + bots[currentBot].matchedUsers[i].messages.length + ' <i class="fa fa-envelope-o"></i></span> </div>');
+                        $('#tab_'+bot.name).append('<div userIndex="' + i + '" class="matchdiv"><img src="' + photo.url172 + '"></img><h3>' + bot.matchedUsers[i].name + '</h3><span class="msg-count">' + bot.matchedUsers[i].messages.length + ' <i class="fa fa-envelope-o"></i></span> </div>');
                 }
 
                 $('#content').append('</div>');
@@ -114,16 +114,6 @@ $(function () {
                     }
                     else if(update.type == "message") {
                         messageUpdate(update);
-                    }
-                    else if(update.type == "match") {
-                         bot = bots[update.bot];
-
-                         index = Object.keys(bots).length;
-                         photo = getMainPhoto(update.user.photos);
-
-                         bot.matches.push(update.user);
-
-                         $('#tab_'+bot.name).append('<div userIndex="' + index + '" class="matchdiv"><img src="' + photo.url84 + '"></img><h3>' + bot.matchedUsers[index].name + ' ' +  bot.matchedUsers[index].messages.length + '</h3></div>');
                     }
                     if (!blurbQueues[update.bot]) {
                         blurbQueues[update.bot] = [];
