@@ -198,7 +198,6 @@ nav h1 {
     margin: auto;
     width: 750px;
     overflow-x: auto;
-    height: 180px;
     white-space: nowrap;
     display: flex;
     justify-content: center;
@@ -208,7 +207,7 @@ nav h1 {
     z-index: 668;
     margin: auto;
     width: 700px;
-    height: 420px;
+    height: 423px;
     overflow-y: auto;
 }
 
@@ -240,7 +239,7 @@ nav h1 {
 .chat-text {
     padding: 5px 10px;
     display: inline-block;
-    border-radius: 30px;
+    border-radius: 15px;
 }
 
 .left > .chat-text {

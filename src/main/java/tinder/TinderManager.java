@@ -79,9 +79,10 @@ public class TinderManager {
                             if (!message.getFromID().equals(bot.getTinderId())) {
                                 jobPool.schedule(() -> {
                                     if (bot.getName().equals("Hodor")) {
-                                        //DO STUFF
+                                        new HodorProfile("Hodor", bot.getAuthToken()).sendResponse(message.getToID() + message.getFromID(), message.getMessage());
+                                    } else {
+                                        profile.sendResponse(message.getToID() + message.getFromID(), message.getMessage());
                                     }
-                                    profile.sendResponse(message.getToID() + message.getFromID(), message.getMessage());
                                 }, new Random().nextInt(10), TimeUnit.SECONDS);
                             }
                         }

@@ -56,10 +56,10 @@ $(function () {
                 $('#content').append('<div class="matchtab" id="tab_' + bot.name + '">');
 
                 for(var i=0; i < bot.matchedUsers.length; i++) {
-                    photo = getMainPhoto(bot.matchedUsers[i].photos);
+                    var photo = getMainPhoto(bot.matchedUsers[i].photos);
 
                     if(photo != undefined)
-                        $('#tab_'+bot.name).append('<div userIndex="' + i + '" class="matchdiv"><img src="' + photo.url172 + '"></img><h3>' + bot.matchedUsers[i].name + '</h3><span class="msg-count">' + bots[currentBot].matchedUsers[i].messages.length + ' <i class="fa fa-envelope-o"></i></span> </div>');
+                        $('#tab_'+bot.name).append('<div userIndex="' + i + '" class="matchdiv"><img src="' + photo.url172 + '"></img><h3>' + bot.matchedUsers[i].name + '</h3><span class="msg-count">' + bot.matchedUsers[i].messages.length + ' <i class="fa fa-envelope-o"></i></span> </div>');
                 }
 
                 $('#content').append('</div>');
