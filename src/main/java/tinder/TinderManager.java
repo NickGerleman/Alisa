@@ -53,12 +53,9 @@ public class TinderManager {
 
         jobPool.scheduleWithFixedDelay(() -> bots.forEach((bot) -> {
             try {
-                Timestamp lastUpdated = getTimestamp(connection, bot.getId());
-                if (lastUpdated == null) {
-                    lastUpdated = Timestamp.from(Instant.now().minus(Duration.ofDays(7)));
-                }
+                String lastUpdated = getTimestamp(connection, bot.getId());
                 CleverbotProfile profile = new CleverbotProfile(bot.getName(), bot.getAuthToken());
-                List<Update> updates = profile.getUpdates(lastUpdated.toInstant().toString());
+                List<Update> updates = profile.getUpdates(lastUpdated);
                 for (Update update : updates) {
                     try {
                         String theirId = update.getId().replace(bot.getTinderId(), "");
@@ -78,14 +75,16 @@ public class TinderManager {
                         for (Message message : update.getMessage()) {
                             addMessage(message, connection);
                             if (!message.getFromID().equals(bot.getTinderId())) {
-                                jobPool.schedule(() -> profile.sendResponse(message.getFromID(), message.getMessage()), new Random().nextInt(10) + 10, TimeUnit.SECONDS);
+                                //jobPool.schedule(() -> profile.sendResponse(message.getFromID(), message.getMessage()), new Random().nextInt(10) + 10, TimeUnit.SECONDS);
                             }
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
-                updateTimestamp(connection, bot.getId());
+                if (!updates.isEmpty()) {
+                    updateTimestamp(connection, bot.getId(), updates.get(0).lastActivityUpdate);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -95,7 +94,7 @@ public class TinderManager {
 //            PreparedStatement smt = connection.prepareStatement("SELECT id FROM \"user\" OUTER JOIN ON bWHERE ")
 //        }), 0, 10, TimeUnit.SECONDS);
 
-        jobPool.scheduleWithFixedDelay(() -> bots.forEach((bot) ->{
+        jobPool.scheduleWithFixedDelay(() -> bots.forEach((bot) -> {
             System.out.println("Starting Fix Job");
             Records botRecords = Tinder.parseAllUpdates(Tinder.getAuthToken(bot.getAuthToken()));
             botRecords.getUsers().forEach((otherUser) -> {
@@ -116,7 +115,7 @@ public class TinderManager {
                 }
             });
             System.out.println("Ending Fix Job");
-            }), 10, 10, TimeUnit.MINUTES);
+        }), 10, 10, TimeUnit.MINUTES);
 
 
     }
@@ -186,23 +185,20 @@ public class TinderManager {
         bQueue.broadcastUpdate(new MatchUpdate(bot.getId(), jsonUser));
     }
 
-    private void updateTimestamp(Connection conn, int botId) throws SQLException {
-        PreparedStatement smt = conn.prepareStatement("UPDATE \"update\" SET time=current_timestamp WHERE bot_id = ?");
-        smt.setInt(1, botId);
-        if (!smt.execute()) {
-            smt = conn.prepareStatement("INSERT INTO \"update\"(time, bot_id) VALUES (CURRENT_TIMESTAMP , ?)");
-            smt.setInt(1, botId);
-            smt.execute();
-        }
+    private void updateTimestamp(Connection conn, int botId, String timestamp) throws SQLException {
+        PreparedStatement smt = conn.prepareStatement("UPDATE \"update\" SET time=? WHERE bot_id = ?");
+        smt.setString(1, timestamp);
+        smt.setInt(2, botId);
+        smt.execute();
     }
 
-    private Timestamp getTimestamp(Connection conn, int botId) throws SQLException {
+    private String getTimestamp(Connection conn, int botId) throws SQLException {
         PreparedStatement smt = conn.prepareStatement("SELECT * FROM \"update\" WHERE bot_id = ? ORDER BY \"time\" DESC LIMIT 1");
         smt.setInt(1, botId);
         ResultSet rs = smt.executeQuery();
         if (!rs.next()) {
             return null;
         }
-        return rs.getTimestamp("time");
+        return rs.getString("time");
     }
 }

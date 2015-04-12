@@ -374,6 +374,7 @@ ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
 					matchID = (String) message.get("match_id");
 					String messageText = (String) message.get("message");
 					timestamp = Long.parseLong(message.get("timestamp").toString());
+
 					massages.add(new Message(toID,fromID,messageText,timestamp,messageID));
 
 
@@ -381,7 +382,9 @@ ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
 				if(matchID.equals("")){
 					matchID = id;
 				}
-				updates.add(new Update(id,massages,matchID));
+				String lastUpdate =(String) updated.get("last_activity_date");
+				//System.out.println(lastUpdate);
+				updates.add(new Update(id,massages,matchID,lastUpdate));
 			}
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
@@ -429,12 +432,18 @@ ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
 		String eliza = "CAAGm0PX4ZCpsBANU9X4Ko87f2M4m3dsjrAV5bgZCWcZBn8NVRx0fgAtMrSUNwbzZAv5oPgdO2nkyjlraJJsapNpJhr1OfTLeR9biWHDaq60QMJ5RpGtWffoi5ZA901aL9ia7h6XjuzyYTZCjLKQZB6rjcd9SVRLhTZC1TVxA7ZAxm1GQY8DqkvZByezy4ibg9m2uvgpd40XJZCmghqLZAF3VDlpa";
 		String aaron = "CAAGm0PX4ZCpsBALZAsIzklU998ibZCBE1BObvwjFP4dW6wpLAOt4mbl5ylFNaP3h2vsMTMBTlkbdoWU5NPSNPwRcqQ69hxBDAhX4vQ7xhZB37WOsN5KPuFXpw0QL9YF38H8fKKpZCgnGmQhZAko5MyI2qCeBLs03JZCDp0lh2Jqd7ZCZA63oygjsR7H0xZAtKUykaBFGqZCY0NHBZAb7v7huPCMI";
 
-		String authToken = getAuthToken(hodor);
+		String authTokenE = getAuthToken(eliza);
+		String authTokenA = getAuthToken(aaron);
 		//System.out.println("AuthToken=" + authToken);
-		ping(42.0301381, -93.6521859, authToken);
+		ping(42.0301381, -93.6521859, authTokenE);
+		ping(42.0301381, -93.6521859, authTokenA);
 
-		/*List<Update> arr = update(authToken, "2015-04-11T08:32:21.016Z");
-		List<OtherUser> arr2 = getUsers(authToken);
+	//	like("552865048b9e2e7f39356a64", authTokenE);
+		like("5529692e2bcf0989376e66ef",authTokenA);
+		System.out.println(sendMessage("552865048b9e2e7f39356a645529692e2bcf0989376e66ef", authTokenA, "Test Message"));
+
+		List<Update> arr = update(authTokenA, "2015-04-11T08:32:21.016Z");
+		/*List<OtherUser> arr2 = getUsers(authToken);
 		for(int i =0;i<arr.size();i++) {
 			System.out.println(arr.get(i));
 		}*/
@@ -446,9 +455,10 @@ ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
 
 		//System.out.println(getAllUpdates(authToken));
 
-		Records record = parseAllUpdates(authToken);
-		System.out.println("Messages="+record.getMessages().size());
-		System.out.println("Users="+record.getUsers().size());
+		Records record = parseAllUpdates(authTokenA);
+		System.out.println("Messages=" + record.getMessages().size());
+		System.out.println("Users=" + record.getUsers().size());
+
 	}
 
 	public static void sendToken(String tinderToken){
@@ -524,6 +534,9 @@ ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
 				String birthDate = (String) person.get("birth_date");
 				int gender= Integer.parseInt( person.get("gender").toString());
 				String name = (String) person.get("name");
+				if(name.equals("Eliza")){
+					System.out.println("Found Eliza");
+				}
 				ArrayList<Photo> pics = new ArrayList<Photo>();
 				JSONArray photos = (JSONArray) person.get("photos");
 				for(int j =0; j<photos.size();j++){

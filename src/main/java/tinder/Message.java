@@ -13,9 +13,9 @@ public class Message {
     public Message(String toID, String fromID, String message, long timestamp, String messageID) {
         this.toID = toID;
         this.fromID = fromID;
-        this.message = message;
         this.timestamp = timestamp;
         this.messageID = messageID;
+        this.message = message;
     }
 
     public long getTimestamp() {
@@ -37,4 +37,5 @@ public class Message {
     public String getMessage() {
         return message;
     }
+
 }
