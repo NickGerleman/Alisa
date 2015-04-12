@@ -13,19 +13,22 @@ import java.sql.*;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class TinderManager {
     private ScheduledExecutorService jobPool;
     private BroadcastQueue bQueue;
+    private Set<String> greeted;
 
     public TinderManager(ScheduledExecutorService jobPool, List<Bot> bots, BroadcastQueue bQueue, Connection connection) {
         this.jobPool = jobPool;
         this.bQueue = bQueue;
-
+        this.greeted = new HashSet<String>();
 //        bots.forEach((bot) -> jobPool.scheduleWithFixedDelay(() ->{
 //            CleverbotProfile profile = new CleverbotProfile(bot.getName(), bot.getAuthToken());
 //            profile.autoLike().forEach((user) -> {
@@ -57,6 +60,7 @@ public class TinderManager {
                 String lastUpdated = getTimestamp(connection, bot.getId());
                 CleverbotProfile profile = new CleverbotProfile(bot.getName(), bot.getAuthToken());
                 List<Update> updates = profile.getUpdates(lastUpdated);
+                greetNewPeople(updates,profile);
                 for (Update update : updates) {
                     try {
                         String theirId = update.getId().replace(bot.getTinderId(), "");
@@ -110,7 +114,17 @@ public class TinderManager {
 
 
     }
-
+    private void greetNewPeople(List<Update> updates, Profile profile){
+        for(Update update: updates){
+            if(!greeted.contains(update.getMatchId())){
+                if(update.getMessage().size()==0){
+                    //send them a greeting!
+                    profile.initiateConversation(update.getMatchId());
+                }
+                greeted.add(update.getMatchId());
+            }
+        }
+    }
     private void addMessage(Message message, Connection conn, int botId) throws SQLException {
         PreparedStatement smt = conn.prepareStatement("SELECT * FROM message WHERE id = ?");
         smt.setString(1, message.getMessageID());
