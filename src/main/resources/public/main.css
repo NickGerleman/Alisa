@@ -127,12 +127,33 @@ nav h1 {
 }
 
 .matchdiv {
+    cursor: pointer;
+    color: #eee;
+    text-shadow: 0 1px grey;
+    background: #555;
+    margin: 14px;
     display: inline-block;
-    padding: 11px;
-    margin-left: auto;
-    margin-right: auto;
-    width: 100px;
+    padding: 0;
+    height: 195px;
     text-align: center;
+    transition: all 0.3s;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.7);
+    border-radius: 3px;
+}
+
+.matchdiv img {
+    width: 140px;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+}
+
+.matchdiv h3 {
+    margin: 5px 0 0 0;
+    font-size: 18px;
+    font-weight: normal;
+}
+
+.msg-count {
+    font-size: 12px;
 }
 
 #map {
@@ -154,8 +175,8 @@ nav h1 {
 
 #content {
     position:fixed;
-    top: 64px;
-    right: 250px;
+    top: 70px;
+    right: 255px;
     left: 0px;
     overflow: auto;
     height: calc(100% - 64px);
@@ -200,6 +221,10 @@ nav h1 {
     display: inline-block;
 }
 
+.left, .right {
+    margin: 8px 0;
+}
+
 .left {
     text-align: left;
     z-index: 669;
@@ -208,4 +233,18 @@ nav h1 {
 .right {
     text-align: right;
     z-index: 670;
+}
+
+.chat-text {
+    padding: 5px 10px;
+    display: inline-block;
+    border-radius: 30px;
+}
+
+.left > .chat-text {
+    background: rgb(105, 203, 105);
+}
+
+.right > .chat-text {
+    background: rgb(65, 183, 255);
 }

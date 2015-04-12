@@ -60,7 +60,7 @@ $(function () {
                     photo = getMainPhoto(bot.matchedUsers[i].photos);
 
                     if(photo != undefined)
-                        $('#tab_'+bot.name).append('<div userIndex="' + i + '" class="matchdiv"><img src="' + photo.url84 + '"></img><h3>' + bot.matchedUsers[i].name + ' ' +  bots[currentBot].matchedUsers[i].messages.length + '</h3></div>');
+                        $('#tab_'+bot.name).append('<div userIndex="' + i + '" class="matchdiv"><img src="' + photo.url172 + '"></img><h3>' + bot.matchedUsers[i].name + '</h3><span class="msg-count">' + bots[currentBot].matchedUsers[i].messages.length + ' <i class="fa fa-envelope-o"></i></span> </div>');
                 }
 
                 $('#content').append('</div>');
@@ -88,11 +88,11 @@ $(function () {
                 for(var i=0; i < user.messages.length; i++) {
                     if(user.messages[i].from == user.id) {
                         // allign left
-                        $('#textWindow').append('<div class="left">' + user.messages[i].text + '</div>');
+                        $('#textWindow').append('<div class="left"><span class="chat-text">' + user.messages[i].text + '</span></div>');
                     }
                     else {
                         // allign right
-                        $('#textWindow').append('<div class="right">' + user.messages[i].text + '</div>');
+                        $('#textWindow').append('<div class="right"><span class="chat-text">' + user.messages[i].text + '</span></div>');
                     }
                 }
             });
