@@ -63,7 +63,7 @@ public class BroadcastQueue {
 
     private class Session {
         private final String sessionId;
-        private final Deque<JsonModel> updateQueue = new ArrayDeque<>();
+        private final Deque<JsonModel> updateQueue = new ConcurrentLinkedDeque<>();
         private AsyncContext context;
         private int connCount = 0;
 
@@ -76,6 +76,9 @@ public class BroadcastQueue {
             connCount++;
             this.context = req.raw().startAsync();
             context.getResponse().setContentType("text/json");
+            if (!updateQueue.isEmpty()) {
+                sendUpdates();
+            }
             context.addListener(new AsyncListener() {
                 @Override
                 public void onComplete(AsyncEvent asyncEvent) throws IOException {
@@ -94,9 +97,6 @@ public class BroadcastQueue {
 
                 @Override
                 public void onStartAsync(AsyncEvent asyncEvent) throws IOException {
-                    if (!updateQueue.isEmpty()) {
-                        sendUpdates();
-                    }
                 }
 
                 private void startTimeout() {
