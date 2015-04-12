@@ -115,6 +115,16 @@ $(function () {
                     else if(update.type == "message") {
                         messageUpdate(update);
                     }
+                    else if(update.type == "match") {
+                         bot = bots[update.bot];
+
+                         index = Object.keys(bots).length;
+                         photo = getMainPhoto(update.user.photos);
+
+                         bot.matches.push(update.user);
+
+                         $('#tab_'+bot.name).append('<div userIndex="' + index + '" class="matchdiv"><img src="' + photo.url84 + '"></img><h3>' + bot.matchedUsers[index].name + ' ' +  bot.matchedUsers[index].messages.length + '</h3></div>');
+                    }
                     if (!blurbQueues[update.bot]) {
                         blurbQueues[update.bot] = [];
                     }
