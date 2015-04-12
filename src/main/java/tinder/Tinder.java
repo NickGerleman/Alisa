@@ -374,7 +374,7 @@ ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
 					matchID = (String) message.get("match_id");
 					String messageText = (String) message.get("message");
 					timestamp = Long.parseLong(message.get("timestamp").toString());
-
+					//	System.out.println(messageText);
 					massages.add(new Message(toID,fromID,messageText,timestamp,messageID));
 
 
@@ -439,14 +439,14 @@ ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
 		ping(42.0301381, -93.6521859, authTokenA);
 
 	//	like("552865048b9e2e7f39356a64", authTokenE);
-		like("5529692e2bcf0989376e66ef",authTokenA);
-		System.out.println(sendMessage("552865048b9e2e7f39356a645529692e2bcf0989376e66ef", authTokenA, "Test Message"));
+		//like("5529692e2bcf0989376e66ef",authTokenA);
+		//System.out.println(sendMessage("552865048b9e2e7f39356a645529692e2bcf0989376e66ef", authTokenA, "Test Message"));
 
 		List<Update> arr = update(authTokenA, "2015-04-11T08:32:21.016Z");
-		/*List<OtherUser> arr2 = getUsers(authToken);
-		for(int i =0;i<arr.size();i++) {
-			System.out.println(arr.get(i));
-		}*/
+		List<OtherUser> arr2 = getUsers(authTokenA);
+		for(int i =0;i<arr2.size();i++) {
+			System.out.println(arr2.get(i).getPhotos());
+		}
 /*
 		String daniel = "54ca7af5eed36d21180a3aff5529692e2bcf0989376e66ef";
 		sendMessage(daniel, authToken, "I'm a real boy");
@@ -458,6 +458,7 @@ ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
 		Records record = parseAllUpdates(authTokenA);
 		System.out.println("Messages=" + record.getMessages().size());
 		System.out.println("Users=" + record.getUsers().size());
+
 
 	}
 
@@ -553,6 +554,7 @@ ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
 					pics.add(newPhoto);
 				}
 				OtherUser newUser = new OtherUser(userID, gender, name,  pics,  birthDate);
+				System.out.println(pics);
 				//System.out.println(newUser);
 				records.addUser(newUser);
 			}
