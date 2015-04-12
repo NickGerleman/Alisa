@@ -25,31 +25,31 @@ public class TinderManager {
         this.jobPool = jobPool;
         this.bQueue = bQueue;
 
-        bots.forEach((bot) -> jobPool.scheduleWithFixedDelay(() ->{
-            CleverbotProfile profile = new CleverbotProfile(bot.getName(), bot.getAuthToken());
-            profile.autoLike().forEach((user) -> {
-                try {
-                    addUser(user, connection);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-                if (user.matched) {
-                    try {
-                        addMatch(bot, user, connection);
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-                }
-                Photo mainPhoto = user.getPhotos().get(0);
-                for (Photo photo : user.getPhotos()) {
-                    if (photo.isMain()) {
-                        mainPhoto = photo;
-                    }
-                }
-                JsonModel likeUpdate = new LikeUpdate(user.getName(), bot.getId(), mainPhoto.getUrl84());
-                bQueue.broadcastUpdate(likeUpdate);
-            });
-        }, 30, 30, TimeUnit.SECONDS));
+//        bots.forEach((bot) -> jobPool.scheduleWithFixedDelay(() ->{
+//            CleverbotProfile profile = new CleverbotProfile(bot.getName(), bot.getAuthToken());
+//            profile.autoLike().forEach((user) -> {
+//                try {
+//                    addUser(user, connection);
+//                } catch (SQLException e) {
+//                    e.printStackTrace();
+//                }
+//                if (user.matched) {
+//                    try {
+//                        addMatch(bot, user, connection);
+//                    } catch (SQLException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//                Photo mainPhoto = user.getPhotos().get(0);
+//                for (Photo photo : user.getPhotos()) {
+//                    if (photo.isMain()) {
+//                        mainPhoto = photo;
+//                    }
+//                }
+//                JsonModel likeUpdate = new LikeUpdate(user.getName(), bot.getId(), mainPhoto.getUrl84());
+//                bQueue.broadcastUpdate(likeUpdate);
+//            });
+//        }, 30, 30, TimeUnit.SECONDS));
 
         bots.forEach((bot) -> jobPool.scheduleWithFixedDelay(() -> {
             try {
@@ -60,6 +60,7 @@ public class TinderManager {
                     try {
                         String theirId = update.getId().replace(bot.getTinderId(), "");
                         User user = User.get(theirId, connection);
+                        user.retrievePhotos(connection);
                         // Fix Later
                         if (user == null) {
                             continue;
@@ -159,7 +160,6 @@ public class TinderManager {
             return;
         }
         int age = (int)(Duration.between(Instant.parse(user.getBirthday()), Instant.now()).get(ChronoUnit.SECONDS) / 60 / 60 / 24 / 365);
-        addUser(user, conn);
         smt = conn.prepareStatement("INSERT INTO match(bot_id, user_id) VALUES (?, ?)");
         smt.setInt(1, bot.getId());
         smt.setString(2, user.getId());
