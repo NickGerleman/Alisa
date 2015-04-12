@@ -9,14 +9,13 @@ public class Message {
     private String message;
     private long timestamp;
     private String messageID;
-    private String lastActivityDate;
 
     public Message(String toID, String fromID, String message, long timestamp, String messageID) {
         this.toID = toID;
         this.fromID = fromID;
         this.timestamp = timestamp;
         this.messageID = messageID;
-        this.lastActivityDate = lastActivityDate;
+        this.message = message;
     }
 
     public long getTimestamp() {
