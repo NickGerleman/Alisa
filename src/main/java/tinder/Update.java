@@ -6,13 +6,15 @@ public class Update {
 	String id;
 	ArrayList<Message> message;
 	String matchID;
+	String lastActivityUpdate;
 
 	public Update(String id, ArrayList<Message> message,
-			 String matchID) {
+			 String matchID, String lastActivityUpdate) {
 		super();
 		this.id = id;
 		this.message = message;
 		this.matchID = matchID;
+		this.lastActivityUpdate=lastActivityUpdate;
 	}
 	public String getId() {
 		return id;
@@ -38,5 +40,9 @@ public class Update {
 				", message='" + message.size() + '\'' +
 				", toID='" + getToID() + '\'' +
 				'}';
+	}
+
+	public String getLastActivityUpdate() {
+		return lastActivityUpdate;
 	}
 }
