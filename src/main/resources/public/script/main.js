@@ -194,4 +194,49 @@ $(function () {
         })[0] || update.user.photos[0]);
         return blurb('match', "Matched With " + update.user.name, mainPhoto.url84);
     }
+
+    function messageBlurb(update) {
+        fromId = update.message.from;
+        toId = update.message.to;
+
+        bot = bot[0]; // not valid
+        found = false;
+// algorithm banks on message having vaild bot tinder id
+
+        for(var i=0; i < bots.length; i++) {
+            if(bots[i].id == toId) {
+                bot = bots[i]; // bot found. flag to search for match using from id
+                found = true;
+                break;
+            }
+        }
+        if(!found) {
+            for(var i=0; i < bots.length; i++) {
+                if(bots[i].id == fromId) {
+                    bot = bots[i];
+                    // bot found search for match using to id
+                    for(var j=0; j < bot.matchedUsers.length; j++) {
+                        if(bot.matchedUsers[j] == toId) {
+                            //match found at index j of bot i
+                            bot.matchedUsers[j].messages.push(update.message);
+                            $('#textWindow').append('<div class="right">' + update.message.text + '</div>');
+                            break;
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+        else {
+            // search for match using from id
+            for(var j=0; j < bot.matchedUsers.length; j++) {
+                if(bot.matchedUsers[j] == fromId) {
+                    // bot found at index j of bot i
+                    bot.matchedUsers[j].messages.push(update.message);
+                    $('#textWindow').append('<div class="left">' + update.message.text + '</div>');
+                    break;
+                }
+            }
+        }
+    }
 });
