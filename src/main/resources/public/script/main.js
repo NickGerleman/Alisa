@@ -60,7 +60,7 @@ $(function () {
                     photo = getMainPhoto(bot.matchedUsers[i].photos);
 
                     if(photo != undefined)
-                        $('#tab_'+bot.name).append('<div userIndex="' + i + '" class="matchdiv"><img src="' + photo.url84 + '"></img><h2>' + bot.matchedUsers[i].name + '</h2></div>');
+                        $('#tab_'+bot.name).append('<div userIndex="' + i + '" class="matchdiv"><img src="' + photo.url84 + '"></img><h3>' + bot.matchedUsers[i].name + ' ' +  bots[currentBot].matchedUsers[i].messages.length + '</h3></div>');
                 }
 
                 $('#content').append('</div>');
@@ -76,13 +76,24 @@ $(function () {
 
                 $('#chatPopup').css('display', '');
                 $('#popupPhotos').empty();
+                $('#textWindow').empty();
 
                 var user = bots[currentBot].matchedUsers[userIndex];
 
                 $('#popupPhotos').append('<div id="subPhotos">');
                 for(var i=0; i < user.photos.length; i++) {
-                    console.log('pic');
                     $('#subPhotos').append('<img class="popupImg" src="' + user.photos[i].url172 + '"></img>');
+                }
+
+                for(var i=0; i < user.messages.length; i++) {
+                    if(user.messages[i].from == user.id) {
+                        // allign left
+                        $('#textWindow').append('<div class="left">' + user.messages[i].text + '</div>');
+                    }
+                    else {
+                        // allign right
+                        $('#textWindow').append('<div class="right">' + user.messages[i].text + '</div>');
+                    }
                 }
             });
         });
