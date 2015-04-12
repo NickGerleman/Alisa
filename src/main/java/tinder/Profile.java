@@ -1,18 +1,19 @@
 package tinder;
 
+import chatterbot.ChatterBot;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.TimeZone;
+import java.util.*;
 
 public abstract class Profile {
 	public String profileName;
 	public String facebookCookie;
 	public String authCookie;
 	public String timestamp;
-	
+
+	public abstract String sendResponse(String userId, String theirMessage);
+
 	public void updateAuthCookie(){
 		authCookie = Tinder.getAuthToken(facebookCookie);
 	}
