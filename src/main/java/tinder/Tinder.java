@@ -535,9 +535,7 @@ ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
 				String birthDate = (String) person.get("birth_date");
 				int gender= Integer.parseInt( person.get("gender").toString());
 				String name = (String) person.get("name");
-				if(name.equals("Eliza")){
-					System.out.println("Found Eliza");
-				}
+
 				ArrayList<Photo> pics = new ArrayList<Photo>();
 				JSONArray photos = (JSONArray) person.get("photos");
 				for(int j =0; j<photos.size();j++){
@@ -554,8 +552,6 @@ ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
 					pics.add(newPhoto);
 				}
 				OtherUser newUser = new OtherUser(userID, gender, name,  pics,  birthDate);
-				System.out.println(pics);
-				//System.out.println(newUser);
 				records.addUser(newUser);
 			}
 		}catch(Exception e){
