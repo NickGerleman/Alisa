@@ -184,18 +184,19 @@ nav h1 {
 
 #chatPopup {
     position: fixed;
-    top: 30px;
-    right: 30px;
-    width: calc(100% - 60px);
-    height: calc(100% - 60px);
+    top: calc(50% - 300px);
+    left: calc(50% - 375px);
+    width: 750px;
+    height: 600px;
     z-index:666;
     background: white;
+    box-shadow: 0 0 20px black;
 }
 
 #popupPhotos {
     z-index: 667;
     margin: auto;
-    width: 700px;
+    width: 750px;
     overflow-x: auto;
     height: 180px;
     white-space: nowrap;
@@ -207,7 +208,7 @@ nav h1 {
     z-index: 668;
     margin: auto;
     width: 700px;
-    height: 250px;
+    height: 420px;
     overflow-y: auto;
 }
 

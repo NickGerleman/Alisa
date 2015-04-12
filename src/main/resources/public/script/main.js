@@ -226,7 +226,7 @@ $(function () {
                         if(bot.matchedUsers[j].id == toId) {
                             //match found at index j of bot i
                             bot.matchedUsers[j].messages.push(update.message);
-                            $('#textWindow').append('<div class="right">' + update.message.text + '</div>');
+                            $('#textWindow').append('<div class="right"><span class="chat-text">' + update.message.text + '</span></div>');
                             break;
                         }
                     }
@@ -240,7 +240,7 @@ $(function () {
                 if(bot.matchedUsers[j].id == fromId) {
                     // bot found at index j of bot i
                     bot.matchedUsers[j].messages.push(update.message);
-                    $('#textWindow').append('<div class="left"><span class="chat-">' + update.message.text + '</div>');
+                    $('#textWindow').append('<div class="left"><span class="chat-text">' + update.message.text + '</span></div>');
                     break;
                 }
             }
