@@ -71,6 +71,9 @@ public class OtherUser {
 		return birthday;
 	}
 	public List<Photo> getPhotos() {
+		if(photos==null){
+			System.out.println(toString());
+		}
 		return photos;
 	}
 
